@@ -53,7 +53,7 @@
       justify-content:center;
       box-shadow:var(--shadow);
     }
-    .slot video{width:100%;height:100%;object-fit:cover;display:none;background:#000}
+    .slot video{width:100%;height:100%;object-fit:cover;display:none;background:#000;transform:scale(1);transform-origin:50% 50%;object-position:50% 50%}
     .empty{display:flex;flex-direction:column;gap:9px;align-items:center;color:#5f666d;font-size:14px;padding:20px;text-align:center}
     .plus{
       width:46px;height:46px;border-radius:50%;
@@ -92,6 +92,11 @@
     input[type=range]{width:100%;accent-color:var(--accent2)}
     .time{width:66px;text-align:right;font-variant-numeric:tabular-nums;color:#3f4a52;font-size:13px}
     .duration{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:7px}
+    .custom-duration{display:none;align-items:center;gap:10px;margin-top:10px;padding:10px 12px;background:#e8e3dc;border-radius:12px}
+    .custom-duration.show{display:flex}
+    .custom-duration input{width:82px;border:1px solid #bcb5ac;border-radius:10px;padding:9px 10px;font-size:16px;background:#fff;color:#30383e}
+    .hint{font-size:12px;color:var(--muted);line-height:1.5}
+    .adjust-title{font-size:12px;color:#60686e;margin:2px 0 4px}
     .choice,.btn{
       border:1px solid #bcb5ac;
       background:#e6e1da;
@@ -128,8 +133,8 @@
 <body>
 <div class="app">
   <h1>手機影片拼接</h1>
-  <div class="sub">上下雙格・手機穩定版・480 × 856</div>
-  <div class="notice">第一次輸出會下載約 30 MB 的處理引擎。建議每支影片先控制在 700 MB 內；輸出時請保持 Safari 畫面開啟。</div>
+  <div class="sub">上下雙格・可調整畫面・480 × 856</div>
+  <div class="notice">加入兩支影片後，可分別調整左右、上下與縮放。兩支影片的原聲會固定保留並混合；輸出時請保持 Safari 畫面開啟。</div>
 
   <div class="grid">
     <div class="slot" id="slot0">
@@ -141,7 +146,11 @@
     </div>
     <div class="control" id="control0">
       <div class="row"><label>截取起點</label><input id="start0" type="range" min="0" max="0" step="0.1" value="0" disabled><span class="time" id="time0">00:00.0</span></div>
-      <div class="row"><label>聲音</label><input id="vol0" type="range" min="0" max="1.5" step="0.05" value="1"><span class="time" id="volText0">100%</span><span class="switch"><input id="mute0" type="checkbox">靜音</span></div>
+      <div class="adjust-title">畫面位置</div>
+      <div class="row"><label>左右</label><input id="posX0" type="range" min="0" max="100" step="1" value="50"><span class="time" id="posXText0">中間</span></div>
+      <div class="row"><label>上下</label><input id="posY0" type="range" min="0" max="100" step="1" value="50"><span class="time" id="posYText0">中間</span></div>
+      <div class="row"><label>縮放</label><input id="zoom0" type="range" min="1" max="1.8" step="0.05" value="1"><span class="time" id="zoomText0">100%</span></div>
+      <div class="hint">兩支影片的聲音會自動保留並混合。</div>
     </div>
 
     <div class="slot" id="slot1">
@@ -153,16 +162,25 @@
     </div>
     <div class="control" id="control1">
       <div class="row"><label>截取起點</label><input id="start1" type="range" min="0" max="0" step="0.1" value="0" disabled><span class="time" id="time1">00:00.0</span></div>
-      <div class="row"><label>聲音</label><input id="vol1" type="range" min="0" max="1.5" step="0.05" value="1"><span class="time" id="volText1">100%</span><span class="switch"><input id="mute1" type="checkbox">靜音</span></div>
+      <div class="adjust-title">畫面位置</div>
+      <div class="row"><label>左右</label><input id="posX1" type="range" min="0" max="100" step="1" value="50"><span class="time" id="posXText1">中間</span></div>
+      <div class="row"><label>上下</label><input id="posY1" type="range" min="0" max="100" step="1" value="50"><span class="time" id="posYText1">中間</span></div>
+      <div class="row"><label>縮放</label><input id="zoom1" type="range" min="1" max="1.8" step="0.05" value="1"><span class="time" id="zoomText1">100%</span></div>
+      <div class="hint">兩支影片的聲音會自動保留並混合。</div>
     </div>
   </div>
 
   <div class="control">
     <div style="font-size:13px;color:#4d555c;margin-bottom:6px">成品長度</div>
     <div class="duration">
-      <button class="choice active" data-duration="10">10 秒</button>
-      <button class="choice" data-duration="15">15 秒</button>
-      <button class="choice" data-duration="5">5 秒測試</button>
+      <button class="choice active" data-duration="5">5 秒</button>
+      <button class="choice" data-duration="10">10 秒</button>
+      <button class="choice" data-duration="custom">自訂</button>
+    </div>
+    <div class="custom-duration" id="customDurationWrap">
+      <label for="customDuration">秒數</label>
+      <input id="customDuration" type="number" min="1" max="15" step="1" value="8" inputmode="numeric">
+      <span class="hint">限 1～15 秒</span>
     </div>
     <div class="actions">
       <button class="btn" id="previewBtn">預覽片段</button>
@@ -191,7 +209,7 @@
   const files = [null, null];
   const objectUrls = [null, null];
   const durations = [0, 0];
-  let outputDuration = 10;
+  let outputDuration = 5;
   let ffmpeg = null;
   let engineLoaded = false;
   let enginePromise = null;
@@ -252,21 +270,54 @@
     $(`time${i}`).textContent='00:00.0';
   }
 
+  function positionText(value, low, high) {
+    const n=+value;
+    if (n < 35) return low;
+    if (n > 65) return high;
+    return '中間';
+  }
+
+  function updateFramePreview(i) {
+    const x=+$(`posX${i}`).value;
+    const y=+$(`posY${i}`).value;
+    const z=+$(`zoom${i}`).value;
+    const v=$(`video${i}`);
+    v.style.objectPosition=`${x}% ${y}%`;
+    v.style.transformOrigin=`${x}% ${y}%`;
+    v.style.transform=`scale(${z})`;
+    $(`posXText${i}`).textContent=positionText(x,'偏左','偏右');
+    $(`posYText${i}`).textContent=positionText(y,'偏上','偏下');
+    $(`zoomText${i}`).textContent=`${Math.round(z*100)}%`;
+  }
+
   [0,1].forEach(i => {
     $(`file${i}`).addEventListener('change', e => loadFile(i, e.target.files[0]));
     $(`start${i}`).addEventListener('input', e => {
       $(`time${i}`).textContent = fmt(e.target.value);
       const v=$(`video${i}`); if (files[i]) v.currentTime=+e.target.value;
     });
-    $(`vol${i}`).addEventListener('input', e => $(`volText${i}`).textContent=`${Math.round(e.target.value*100)}%`);
+    ['posX','posY','zoom'].forEach(kind => {
+      $(`${kind}${i}`).addEventListener('input', updateFramePreview.bind(null,i));
+    });
   });
   document.querySelectorAll('[data-change]').forEach(b=>b.addEventListener('click',()=>{ const input=$(`file${b.dataset.change}`); input.value=''; input.click(); }));
   document.querySelectorAll('[data-remove]').forEach(b=>b.addEventListener('click',()=>removeFile(+b.dataset.remove)));
+  function applyDuration(value) {
+    const n=Math.max(1,Math.min(15,Math.round(Number(value)||5)));
+    outputDuration=n;
+    $('customDuration').value=n;
+    updateStartLimit(0); updateStartLimit(1);
+  }
+
   document.querySelectorAll('.choice').forEach(btn=>btn.addEventListener('click',()=>{
     document.querySelectorAll('.choice').forEach(x=>x.classList.remove('active'));
-    btn.classList.add('active'); outputDuration=+btn.dataset.duration;
-    updateStartLimit(0); updateStartLimit(1);
+    btn.classList.add('active');
+    const custom=btn.dataset.duration==='custom';
+    $('customDurationWrap').classList.toggle('show',custom);
+    applyDuration(custom ? $('customDuration').value : btn.dataset.duration);
   }));
+  $('customDuration').addEventListener('input',e=>applyDuration(e.target.value));
+  $('customDuration').addEventListener('blur',e=>applyDuration(e.target.value));
 
   $('previewBtn').addEventListener('click', async () => {
     if (exportInProgress) return;
@@ -323,15 +374,15 @@
       await ffmpeg.writeFile(in0, await fetchFile(files[0]));
       await ffmpeg.writeFile(in1, await fetchFile(files[1]));
       const s0=(+$('start0').value).toFixed(3), s1=(+$('start1').value).toFixed(3);
-      const v0=$('mute0').checked?0:+$('vol0').value;
-      const v1=$('mute1').checked?0:+$('vol1').value;
+      const x0=(+$('posX0').value/100).toFixed(3), y0=(+$('posY0').value/100).toFixed(3), z0=(+$('zoom0').value).toFixed(2);
+      const x1=(+$('posX1').value/100).toFixed(3), y1=(+$('posY1').value/100).toFixed(3), z1=(+$('zoom1').value).toFixed(2);
       const d=outputDuration.toFixed(3);
       const filter=[
-        `[0:v]trim=start=${s0}:duration=${d},settb=AVTB,setpts=PTS-STARTPTS,scale=480:428:force_original_aspect_ratio=increase,crop=480:428,setsar=1,fps=24[v0]`,
-        `[1:v]trim=start=${s1}:duration=${d},settb=AVTB,setpts=PTS-STARTPTS,scale=480:428:force_original_aspect_ratio=increase,crop=480:428,setsar=1,fps=24[v1]`,
+        `[0:v]trim=start=${s0}:duration=${d},settb=AVTB,setpts=PTS-STARTPTS,scale=w='if(gt(a,480/428),-2,480*${z0})':h='if(gt(a,480/428),428*${z0},-2)',crop=480:428:x='(in_w-out_w)*${x0}':y='(in_h-out_h)*${y0}',setsar=1,fps=24[v0]`,
+        `[1:v]trim=start=${s1}:duration=${d},settb=AVTB,setpts=PTS-STARTPTS,scale=w='if(gt(a,480/428),-2,480*${z1})':h='if(gt(a,480/428),428*${z1},-2)',crop=480:428:x='(in_w-out_w)*${x1}':y='(in_h-out_h)*${y1}',setsar=1,fps=24[v1]`,
         `[v0][v1]vstack=inputs=2[v]`,
-        `[0:a]atrim=start=${s0}:duration=${d},asetpts=PTS-STARTPTS,volume=${v0}[a0]`,
-        `[1:a]atrim=start=${s1}:duration=${d},asetpts=PTS-STARTPTS,volume=${v1}[a1]`,
+        `[0:a]atrim=start=${s0}:duration=${d},asetpts=PTS-STARTPTS,volume=1[a0]`,
+        `[1:a]atrim=start=${s1}:duration=${d},asetpts=PTS-STARTPTS,volume=1[a1]`,
         `[a0][a1]amix=inputs=2:duration=longest:dropout_transition=0:normalize=0,alimiter=limit=0.95[a]`
       ].join(';');
       $('status').textContent='正在合成兩格畫面與兩邊聲音…';
@@ -341,7 +392,7 @@
       if (outputUrl) URL.revokeObjectURL(outputUrl);
       outputUrl=URL.createObjectURL(new Blob([data.buffer],{type:'video/mp4'}));
       $('resultVideo').src=outputUrl; $('download').href=outputUrl;
-      $('result').style.display='block'; $('status').textContent='輸出完成'; $('detail').textContent='請先播放檢查兩格是否都會動、兩邊聲音是否都有。'; $('bar').style.width='100%';
+      $('result').style.display='block'; $('status').textContent='輸出完成'; $('detail').textContent='請先播放檢查兩格畫面位置與兩邊聲音是否正常。'; $('bar').style.width='100%';
       $('result').scrollIntoView({behavior:'smooth'});
       await safeDelete(in0,in1,'output.mp4');
     } catch(err) {
@@ -355,6 +406,8 @@
       try { await safeDelete('output.mp4'); } catch(e) {}
     }
   });
+  updateFramePreview(0); updateFramePreview(1);
+
   document.addEventListener('visibilitychange',()=>{
     if (document.hidden && exportInProgress) {
       $('detail').textContent='畫面已切到背景，iPhone 可能暫停處理；請立刻回到此頁。';
