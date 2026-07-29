@@ -4,24 +4,24 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
   <meta name="theme-color" content="#f5f3ef" />
-  <title>Dorayaki Video｜手機影片拼接 v5</title>
+  <title>Dorayaki Video｜手機影片拼接 v6</title>
   <style>
     :root{
-      --bg:#e9e5de;
-      --panel:#f7f5f1;
-      --panel2:#ded9d1;
-      --line:#c8c1b7;
+      --bg:#e3ded6;
+      --panel:#f2efea;
+      --panel2:#d8d2ca;
+      --line:#bbb3a9;
       --text:#292d32;
       --muted:#686f76;
-      --accent:#667684;
-      --accent2:#4f6272;
+      --accent:#687985;
+      --accent2:#506572;
       --danger:#a45f63;
       --shadow:0 9px 24px rgba(48,54,60,.12);
     }
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     body{
       margin:0;
-      background:linear-gradient(180deg,#efede8 0%,#ddd8d0 100%);
+      background:linear-gradient(180deg,#ece8e1 0%,#d8d2ca 100%);
       color:var(--text);
       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;
       min-height:100vh;
@@ -54,6 +54,9 @@
       box-shadow:var(--shadow);
     }
     .slot video{width:100%;height:100%;object-fit:cover;display:none;background:#000;transform:scale(1);transform-origin:50% 50%;object-position:50% 50%;touch-action:none;user-select:none;-webkit-user-select:none}
+    .slot.locked video{touch-action:pan-y;pointer-events:none}
+    .slot.locked{border-style:solid}
+    .slot.locked::after{content:"畫面已鎖定";position:absolute;left:50%;bottom:10px;transform:translateX(-50%);background:rgba(44,52,58,.78);color:#fff;border-radius:999px;padding:5px 10px;font-size:11px;pointer-events:none}
     .empty{display:flex;flex-direction:column;gap:9px;align-items:center;color:#5f666d;font-size:14px;padding:20px;text-align:center}
     .plus{
       width:46px;height:46px;border-radius:50%;
@@ -135,7 +138,7 @@
 <div class="app">
   <h1>Dorayaki Video</h1>
   <div class="sub">上下雙格影片拼接</div>
-  <div class="notice">加入影片後，可直接拖動畫面位置，雙指縮放。兩支影片原聲會一起保留；輸出時請留在此頁。</div>
+  <div class="notice">加入影片後可拖動畫面、雙指縮放。按下開始拼接後會自動鎖定兩格，往下滑動頁面時不會再移動畫面；兩支影片原聲會一起保留。</div>
 
   <div class="grid">
     <div class="slot" id="slot0">
@@ -199,7 +202,7 @@
     <video id="resultVideo" controls playsinline></video>
     <a class="btn primary download" id="download" download="Dorayaki_影片拼接.mp4">下載／儲存影片</a>
   </div>
-  <div class="foot">影片只在你的手機內處理，不會上傳到伺服器。<br>兩支影片會在手機內完成拼接與混音。<br>v4 手勢調整版</div>
+  <div class="foot">影片只在你的手機內處理，不會上傳到伺服器。<br>兩支影片會在手機內完成拼接與混音。<br>v6 鎖定畫面穩定版</div>
 </div>
 
 <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
@@ -309,6 +312,7 @@
     });
   });
   const gestures = [{dragging:false,lastX:0,lastY:0,pinch:0,startZoom:1},{dragging:false,lastX:0,lastY:0,pinch:0,startZoom:1}];
+  let frameLocked = false;
 
   function clamp(n,min,max){ return Math.max(min,Math.min(max,n)); }
   function touchDistance(touches){
@@ -320,12 +324,12 @@
   function bindGesture(i){
     const slot=$(`slot${i}`), g=gestures[i];
     slot.addEventListener('touchstart',e=>{
-      if(!files[i]) return;
+      if(!files[i] || frameLocked || exportInProgress) return;
       if(e.touches.length===1){ g.dragging=true; g.lastX=e.touches[0].clientX; g.lastY=e.touches[0].clientY; }
       if(e.touches.length===2){ g.dragging=false; g.pinch=touchDistance(e.touches); g.startZoom=+$(`zoom${i}`).value; }
     },{passive:true});
     slot.addEventListener('touchmove',e=>{
-      if(!files[i]) return;
+      if(!files[i] || frameLocked || exportInProgress) return;
       if(e.touches.length===1 && g.dragging){
         e.preventDefault();
         const rect=slot.getBoundingClientRect();
@@ -397,13 +401,32 @@
     for (const name of names) { try { await ffmpeg.deleteFile(name); } catch(e) {} }
   }
 
+  function setFrameLocked(locked) {
+    frameLocked = locked;
+    [0,1].forEach(i => {
+      $(`slot${i}`).classList.toggle('locked', locked);
+      $(`start${i}`).disabled = locked || !files[i];
+      ['posX','posY','zoom'].forEach(kind => $(`${kind}${i}`).disabled = locked);
+    });
+    document.querySelectorAll('[data-change],[data-remove],[data-reset],.choice').forEach(el => el.disabled = locked);
+    $('customDuration').disabled = locked;
+  }
+
   $('exportBtn').addEventListener('click', async () => {
     if (exportInProgress) return;
     if (!files[0] || !files[1]) return alert('請先加入兩支影片。');
     if (durations.some(d=>d < outputDuration)) return alert('其中一支影片短於成品長度，請選擇較短的成品長度或更換影片。');
+    const lockedSettings = {
+      starts:[+$('start0').value,+$('start1').value],
+      x:[+$('posX0').value/100,+$('posX1').value/100],
+      y:[+$('posY0').value/100,+$('posY1').value/100],
+      zoom:[+$('zoom0').value,+$('zoom1').value],
+      duration:outputDuration
+    };
     exportInProgress=true;
+    setFrameLocked(true);
     [$('video0'),$('video1')].forEach(v=>v.pause());
-    const btn=$('exportBtn'); btn.disabled=true;
+    const btn=$('exportBtn'); btn.disabled=true; btn.textContent='拼接中，畫面已鎖定';
     $('progressWrap').style.display='block'; $('result').style.display='none'; $('bar').style.width='0%';
     try {
       await loadEngine();
@@ -414,10 +437,10 @@
       const in0=`input0.${ext0}`, in1=`input1.${ext1}`;
       await ffmpeg.writeFile(in0, await fetchFile(files[0]));
       await ffmpeg.writeFile(in1, await fetchFile(files[1]));
-      const s0=(+$('start0').value).toFixed(3), s1=(+$('start1').value).toFixed(3);
-      const x0=(+$('posX0').value/100).toFixed(3), y0=(+$('posY0').value/100).toFixed(3), z0=(+$('zoom0').value).toFixed(2);
-      const x1=(+$('posX1').value/100).toFixed(3), y1=(+$('posY1').value/100).toFixed(3), z1=(+$('zoom1').value).toFixed(2);
-      const d=outputDuration.toFixed(3);
+      const s0=lockedSettings.starts[0].toFixed(3), s1=lockedSettings.starts[1].toFixed(3);
+      const x0=lockedSettings.x[0].toFixed(3), y0=lockedSettings.y[0].toFixed(3), z0=lockedSettings.zoom[0].toFixed(2);
+      const x1=lockedSettings.x[1].toFixed(3), y1=lockedSettings.y[1].toFixed(3), z1=lockedSettings.zoom[1].toFixed(2);
+      const d=lockedSettings.duration.toFixed(3);
       const filter=[
         `[0:v]trim=start=${s0}:duration=${d},settb=AVTB,setpts=PTS-STARTPTS,scale=w='if(gt(a,432/384),-2,432*${z0})':h='if(gt(a,432/384),384*${z0},-2)',crop=432:384:x='(in_w-out_w)*${x0}':y='(in_h-out_h)*${y0}',setsar=1,fps=20[v0]`,
         `[1:v]trim=start=${s1}:duration=${d},settb=AVTB,setpts=PTS-STARTPTS,scale=w='if(gt(a,432/384),-2,432*${z1})':h='if(gt(a,432/384),384*${z1},-2)',crop=432:384:x='(in_w-out_w)*${x1}':y='(in_h-out_h)*${y1}',setsar=1,fps=20[v1]`,
@@ -443,7 +466,8 @@
       alert('輸出失敗，請查看下方錯誤訊息。');
     } finally {
       exportInProgress=false;
-      btn.disabled=false;
+      setFrameLocked(false);
+      btn.disabled=false; btn.textContent='開始拼接';
       try { await safeDelete('output.mp4'); } catch(e) {}
     }
   });
