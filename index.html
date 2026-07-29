@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
   <meta name="theme-color" content="#f5f3ef" />
-  <title>Dorayaki Video｜手機影片拼接</title>
+  <title>Dorayaki Video｜手機影片拼接 v5</title>
   <style>
     :root{
       --bg:#e9e5de;
@@ -290,7 +290,16 @@
   }
 
   [0,1].forEach(i => {
-    $(`file${i}`).addEventListener('change', e => loadFile(i, e.target.files[0]));
+    $(`file${i}`).addEventListener('change', e => {
+      loadFile(i, e.target.files[0]);
+      // 選入第一支影片後立即在背景準備處理核心，
+      // 使用者調整畫面時同步載入，減少按下拼接後的等待。
+      if (!engineLoaded && !enginePromise) {
+        loadEngine().catch(err => {
+          console.warn('背景初始化失敗，輸出時會再嘗試：', err);
+        });
+      }
+    });
     $(`start${i}`).addEventListener('input', e => {
       $(`time${i}`).textContent = fmt(e.target.value);
       const v=$(`video${i}`); if (files[i]) v.currentTime=+e.target.value;
@@ -367,7 +376,7 @@
     if (enginePromise) return enginePromise;
     enginePromise=(async()=>{
       $('status').textContent='正在初始化影片處理…';
-      $('detail').textContent='第一次使用會稍久，請保持網路連線。';
+      $('detail').textContent='首次啟動正在準備，之後會更快。';
       const { FFmpeg } = FFmpegWASM;
       const { toBlobURL } = FFmpegUtil;
       ffmpeg = new FFmpeg();
@@ -410,16 +419,16 @@
       const x1=(+$('posX1').value/100).toFixed(3), y1=(+$('posY1').value/100).toFixed(3), z1=(+$('zoom1').value).toFixed(2);
       const d=outputDuration.toFixed(3);
       const filter=[
-        `[0:v]trim=start=${s0}:duration=${d},settb=AVTB,setpts=PTS-STARTPTS,scale=w='if(gt(a,480/428),-2,480*${z0})':h='if(gt(a,480/428),428*${z0},-2)',crop=480:428:x='(in_w-out_w)*${x0}':y='(in_h-out_h)*${y0}',setsar=1,fps=24[v0]`,
-        `[1:v]trim=start=${s1}:duration=${d},settb=AVTB,setpts=PTS-STARTPTS,scale=w='if(gt(a,480/428),-2,480*${z1})':h='if(gt(a,480/428),428*${z1},-2)',crop=480:428:x='(in_w-out_w)*${x1}':y='(in_h-out_h)*${y1}',setsar=1,fps=24[v1]`,
+        `[0:v]trim=start=${s0}:duration=${d},settb=AVTB,setpts=PTS-STARTPTS,scale=w='if(gt(a,432/384),-2,432*${z0})':h='if(gt(a,432/384),384*${z0},-2)',crop=432:384:x='(in_w-out_w)*${x0}':y='(in_h-out_h)*${y0}',setsar=1,fps=20[v0]`,
+        `[1:v]trim=start=${s1}:duration=${d},settb=AVTB,setpts=PTS-STARTPTS,scale=w='if(gt(a,432/384),-2,432*${z1})':h='if(gt(a,432/384),384*${z1},-2)',crop=432:384:x='(in_w-out_w)*${x1}':y='(in_h-out_h)*${y1}',setsar=1,fps=20[v1]`,
         `[v0][v1]vstack=inputs=2[v]`,
         `[0:a]atrim=start=${s0}:duration=${d},asetpts=PTS-STARTPTS,volume=1[a0]`,
         `[1:a]atrim=start=${s1}:duration=${d},asetpts=PTS-STARTPTS,volume=1[a1]`,
         `[a0][a1]amix=inputs=2:duration=longest:dropout_transition=0:normalize=0,alimiter=limit=0.95[a]`
       ].join(';');
       $('status').textContent='正在合成兩格畫面與兩邊聲音…';
-      $('detail').textContent='請保持此頁開啟，完成前不要切換 App。';
-      await ffmpeg.exec(['-threads','1','-i',in0,'-i',in1,'-filter_complex',filter,'-map','[v]','-map','[a]','-t',d,'-c:v','libx264','-preset','ultrafast','-crf','29','-pix_fmt','yuv420p','-c:a','aac','-b:a','128k','-ar','44100','-movflags','+faststart','output.mp4']);
+      $('detail').textContent='中等畫質快速輸出中，請保持此頁開啟。';
+      await ffmpeg.exec(['-threads','1','-i',in0,'-i',in1,'-filter_complex',filter,'-map','[v]','-map','[a]','-t',d,'-c:v','libx264','-preset','ultrafast','-crf','31','-pix_fmt','yuv420p','-c:a','aac','-b:a','96k','-ar','44100','-movflags','+faststart','output.mp4']);
       const data=await ffmpeg.readFile('output.mp4');
       if (outputUrl) URL.revokeObjectURL(outputUrl);
       outputUrl=URL.createObjectURL(new Blob([data.buffer],{type:'video/mp4'}));
