@@ -13,87 +13,112 @@
       --bg: #0e131a;
       --panel: #171e28;
       --panel-2: #202a36;
+      --panel-3: #111821;
       --line: #344355;
       --text: #edf2f7;
       --muted: #9eabba;
       --accent: #7891ad;
-      --accent-2: #a7bad0;
-      --danger: #b87373;
-      --ok: #7da38b;
+      --accent-2: #b7c8d9;
+      --danger: #d39a9a;
+      --ok: #8caf99;
       --radius: 15px;
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif; }
-    body { padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom); overscroll-behavior: none; }
+    body { padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom); overscroll-behavior-y: none; }
     button, select, input { font: inherit; }
     button { touch-action: manipulation; }
+    button:disabled, input:disabled, select:disabled { opacity: .46; }
 
-    .app { width: min(100%, 520px); margin: 0 auto; padding: 12px 0 22px; }
-    header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
-    .brand h1 { font-size: 19px; line-height: 1.2; margin: 0 0 4px; letter-spacing: .03em; }
-    .brand p { font-size: 12px; color: var(--muted); margin: 0; }
-    .badge { padding: 7px 10px; border: 1px solid var(--line); border-radius: 999px; color: var(--accent-2); background: var(--panel); font-size: 12px; white-space: nowrap; }
+    .app { width: min(100%, 520px); margin: 0 auto; padding: 12px 0 26px; }
+    header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+    .brand h1 { font-size: 19px; line-height: 1.2; margin: 0 0 3px; letter-spacing: .03em; }
+    .brand p { font-size: 11px; color: var(--muted); margin: 0; }
+    .badge { padding: 6px 9px; border: 1px solid var(--line); border-radius: 999px; color: var(--accent-2); background: var(--panel); font-size: 11px; white-space: nowrap; }
 
-    .panel { background: var(--panel); border: 1px solid #253140; border-radius: var(--radius); padding: 12px; box-shadow: 0 10px 30px rgba(0,0,0,.18); }
-    .toolbar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
-    .segmented { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; padding: 4px; border-radius: 12px; background: #10161e; border: 1px solid #283545; }
-    .segmented button { border: 0; border-radius: 9px; padding: 10px; background: transparent; color: var(--muted); font-weight: 700; }
+    .panel { background: var(--panel); border: 1px solid #253140; border-radius: var(--radius); padding: 11px; box-shadow: 0 10px 30px rgba(0,0,0,.18); }
+    .topbar { display: flex; align-items: end; justify-content: space-between; gap: 10px; margin-bottom: 9px; }
+    .group-label { display: block; margin: 0 0 5px 2px; font-size: 10px; color: var(--muted); }
+    .segmented { display: inline-grid; grid-auto-flow: column; gap: 3px; padding: 3px; border-radius: 10px; background: #10161e; border: 1px solid #283545; }
+    .segmented button { min-width: 54px; min-height: 34px; border: 0; border-radius: 7px; padding: 6px 12px; background: transparent; color: var(--muted); font-weight: 700; font-size: 13px; }
     .segmented button.active { background: var(--panel-2); color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,.25); }
 
-    button, .button-label, select {
-      min-height: 43px;
-      border: 1px solid var(--line);
-      border-radius: 11px;
-      color: var(--text);
-      background: var(--panel-2);
-      padding: 9px 12px;
-    }
-    button:disabled { opacity: .42; }
-    .primary { background: #35485d; border-color: #4f6680; font-weight: 750; }
-    .secondary { background: #1d2631; }
-    .danger { color: #e5b0b0; }
-    .full { width: 100%; }
+    .duration-wrap { text-align: right; }
+    .duration-segment button { min-width: 48px; padding-inline: 9px; }
+    .custom-duration { display: none; margin-top: 5px; align-items: center; justify-content: flex-end; gap: 5px; color: var(--muted); font-size: 11px; }
+    .custom-duration.show { display: flex; }
+    .custom-duration input { width: 68px; min-height: 34px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel-2); color: var(--text); padding: 5px 8px; text-align: center; }
 
-    .canvas-shell { position: relative; width: 100%; max-height: 66vh; aspect-ratio: 9 / 16; margin: 0 auto; border-radius: 13px; overflow: hidden; background: #05070a; border: 1px solid #334154; touch-action: none; }
+    .canvas-shell { position: relative; width: min(100%, 360px); max-height: 62vh; aspect-ratio: 9 / 16; margin: 0 auto; border-radius: 13px; overflow: hidden; background: #05070a; border: 1px solid #334154; touch-action: none; user-select: none; }
     canvas { display: block; width: 100%; height: 100%; background: #070a0e; }
-    .hint { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); max-width: calc(100% - 24px); padding: 7px 10px; border-radius: 999px; background: rgba(8,12,17,.78); color: #d5dee7; font-size: 11px; text-align: center; pointer-events: none; backdrop-filter: blur(8px); transition: opacity .25s; }
+    .hint { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); width: max-content; max-width: calc(100% - 22px); padding: 7px 10px; border-radius: 999px; background: rgba(8,12,17,.80); color: #d5dee7; font-size: 10px; text-align: center; pointer-events: none; backdrop-filter: blur(8px); transition: opacity .25s; }
     .hint.hide { opacity: 0; }
 
-    .slot-controls { margin-top: 10px; display: grid; gap: 8px; }
-    .slot-title { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--accent-2); }
-    .slot-title small { color: var(--muted); }
-    .slot-row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; }
-    .button-label { display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-    .button-label input { display: none; }
-    .zoom-row { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; font-size: 12px; color: var(--muted); }
+    .selected-panel { margin-top: 9px; padding: 10px; border: 1px solid #2d3a49; border-radius: 12px; background: var(--panel-3); }
+    .selected-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .selected-title { font-size: 13px; font-weight: 750; color: var(--accent-2); }
+    .selected-file { min-width: 0; max-width: 58%; color: var(--muted); font-size: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .mini-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 9px; }
+
+    button, .button-label, select {
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      color: var(--text);
+      background: var(--panel-2);
+      padding: 8px 11px;
+    }
+    .mini-actions button { min-height: 36px; padding: 6px 8px; font-size: 12px; }
+    .primary { background: #35485d; border-color: #4f6680; font-weight: 750; }
+    .secondary { background: #1d2631; }
+    .danger { color: var(--danger); }
+    .full { width: 100%; }
+
+    .control-list { display: grid; gap: 9px; }
+    .control-row { display: grid; grid-template-columns: 72px 1fr 52px; gap: 8px; align-items: center; }
+    .control-row label { color: var(--muted); font-size: 11px; }
+    .value { color: var(--accent-2); font-size: 11px; text-align: right; font-variant-numeric: tabular-nums; }
     input[type="range"] { width: 100%; accent-color: var(--accent); }
+    .clip-info { display: flex; justify-content: space-between; gap: 10px; margin-top: -2px; color: var(--muted); font-size: 10px; }
+    .clip-info strong { color: var(--accent-2); font-weight: 650; }
+    .mute-line { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .mute-line label { display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: 11px; }
+    .mute-line input { width: 17px; height: 17px; accent-color: var(--accent); }
 
-    .settings { margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .settings { margin-top: 9px; display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
     .field { display: grid; gap: 5px; }
-    .field label { font-size: 11px; color: var(--muted); }
-    select { width: 100%; appearance: none; background-image: linear-gradient(45deg,transparent 50%,#9cadbd 50%),linear-gradient(135deg,#9cadbd 50%,transparent 50%); background-position: calc(100% - 16px) 18px, calc(100% - 11px) 18px; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 28px; }
+    .field label { font-size: 10px; color: var(--muted); }
+    select { width: 100%; appearance: none; background-image: linear-gradient(45deg,transparent 50%,#9cadbd 50%),linear-gradient(135deg,#9cadbd 50%,transparent 50%); background-position: calc(100% - 16px) 17px, calc(100% - 11px) 17px; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 28px; }
 
-    .actions { margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .actions .export { grid-column: 1 / -1; }
+    .actions { margin-top: 9px; display: grid; grid-template-columns: 1fr 1.35fr; gap: 7px; }
+    .actions button { min-height: 43px; }
 
-    .status { display: none; margin-top: 10px; padding: 10px; border-radius: 11px; background: #10171f; border: 1px solid #2b3948; }
+    .status { display: none; margin-top: 9px; padding: 9px; border-radius: 11px; background: #10171f; border: 1px solid #2b3948; }
     .status.show { display: block; }
-    .status-line { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; margin-bottom: 7px; }
-    .progress { height: 8px; border-radius: 99px; background: #26313d; overflow: hidden; }
+    .status-line { display: flex; justify-content: space-between; gap: 10px; font-size: 11px; margin-bottom: 7px; }
+    .progress { height: 7px; border-radius: 99px; background: #26313d; overflow: hidden; }
     .progress > div { height: 100%; width: 0%; background: linear-gradient(90deg,#607d9b,#9bb0c5); transition: width .15s linear; }
 
-    .result { display: none; margin-top: 10px; gap: 8px; }
+    .result { display: none; margin-top: 9px; gap: 7px; }
     .result.show { display: grid; }
     .result video { width: 100%; max-height: 50vh; border-radius: 11px; background: #000; border: 1px solid var(--line); }
-    .result-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .result-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+    .button-label { display: flex; align-items: center; justify-content: center; text-decoration: none; cursor: pointer; }
 
-    .note { margin: 10px 2px 0; color: var(--muted); font-size: 11px; line-height: 1.55; }
+    .note { margin: 9px 2px 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
     .hidden-videos { position: fixed; width: 1px; height: 1px; left: -9999px; top: -9999px; overflow: hidden; opacity: .001; pointer-events: none; }
+    #videoPicker { display: none; }
 
-    @media (max-height: 700px) {
-      .canvas-shell { max-height: 55vh; }
+    @media (max-height: 720px) {
+      .canvas-shell { max-height: 55vh; width: min(100%, 320px); }
       .brand p, .note { display: none; }
+    }
+    @media (max-width: 370px) {
+      .topbar { align-items: start; }
+      .segmented button { min-width: 47px; padding-inline: 8px; }
+      .duration-segment button { min-width: 43px; }
+      .control-row { grid-template-columns: 65px 1fr 48px; }
     }
   </style>
 </head>
@@ -104,52 +129,77 @@
         <h1>手機影片拼接</h1>
         <p>銅鑼燒工作室 · 2 格／3 格直式版</p>
       </div>
-      <div class="badge">V1.0</div>
+      <div class="badge">V2.0</div>
     </header>
 
     <section class="panel">
-      <div class="toolbar">
-        <div class="segmented" aria-label="選擇版型">
-          <button id="layout2" class="active" type="button">2 格</button>
-          <button id="layout3" type="button">3 格</button>
+      <div class="topbar">
+        <div>
+          <span class="group-label">版型</span>
+          <div class="segmented" aria-label="選擇版型">
+            <button id="layout2" class="active" type="button">2 格</button>
+            <button id="layout3" type="button">3 格</button>
+          </div>
+        </div>
+        <div class="duration-wrap">
+          <span class="group-label">成品長度</span>
+          <div class="segmented duration-segment" aria-label="選擇成品長度">
+            <button class="active" data-duration="10" type="button">10 秒</button>
+            <button data-duration="15" type="button">15 秒</button>
+            <button data-duration="custom" type="button">自訂</button>
+          </div>
+          <div id="customDurationWrap" class="custom-duration">
+            <input id="customDuration" type="number" inputmode="decimal" min="1" max="60" step="1" value="10" /> 秒
+          </div>
         </div>
       </div>
 
-      <div id="canvasShell" class="canvas-shell">
+      <div id="canvasShell" class="canvas-shell" aria-label="影片拼接預覽區">
         <canvas id="preview" width="720" height="1280"></canvas>
-        <div id="gestureHint" class="hint">點選格子後，可拖曳位置、雙指縮放</div>
+        <div id="gestureHint" class="hint">空格直接點選影片；加入後可拖曳、雙指縮放</div>
       </div>
+      <input id="videoPicker" type="file" accept="video/*" />
 
-      <div class="slot-controls">
-        <div class="slot-title">
-          <span id="selectedLabel">目前選取：第 1 格</span>
-          <small id="fileName">尚未加入影片</small>
+      <div class="selected-panel">
+        <div class="selected-head">
+          <span id="selectedLabel" class="selected-title">第 1 格設定</span>
+          <span id="fileName" class="selected-file">尚未加入影片</span>
         </div>
-        <div class="slot-row">
-          <label class="button-label primary">
-            <input id="videoPicker" type="file" accept="video/*" />
-            <span id="pickerText">加入第 1 格影片</span>
-          </label>
-          <button id="resetSlot" class="secondary" type="button">置中</button>
+
+        <div class="mini-actions">
+          <button id="replaceSlot" class="secondary" type="button">選擇／更換</button>
+          <button id="resetSlot" class="secondary" type="button">位置置中</button>
           <button id="removeSlot" class="secondary danger" type="button">移除</button>
         </div>
-        <div class="zoom-row">
-          <span>縮小</span>
-          <input id="zoom" type="range" min="1" max="3" value="1" step="0.01" aria-label="影片縮放" />
-          <span id="zoomValue">100%</span>
+
+        <div class="control-list">
+          <div class="control-row">
+            <label for="clipStart">片段起點</label>
+            <input id="clipStart" type="range" min="0" max="0" value="0" step="0.1" disabled />
+            <span id="clipStartValue" class="value">00:00.0</span>
+          </div>
+          <div class="clip-info">
+            <span>選取片段：<strong id="clipRange">尚未加入影片</strong></span>
+            <span id="sourceDuration">原片 00:00</span>
+          </div>
+          <div class="control-row">
+            <label for="zoom">畫面縮放</label>
+            <input id="zoom" type="range" min="1" max="3" value="1" step="0.01" disabled />
+            <span id="zoomValue" class="value">100%</span>
+          </div>
+          <div class="control-row">
+            <label for="volume">影片音量</label>
+            <input id="volume" type="range" min="0" max="1" value="0.8" step="0.01" disabled />
+            <span id="volumeValue" class="value">80%</span>
+          </div>
+          <div class="mute-line">
+            <label><input id="muteSlot" type="checkbox" disabled /> 此格靜音</label>
+            <span>輸出時會混合每格聲音</span>
+          </div>
         </div>
       </div>
 
       <div class="settings">
-        <div class="field">
-          <label for="audioSource">輸出聲音</label>
-          <select id="audioSource">
-            <option value="none">全部靜音</option>
-            <option value="0">第 1 格聲音</option>
-            <option value="1">第 2 格聲音</option>
-            <option value="2" id="audio3Option" hidden>第 3 格聲音</option>
-          </select>
-        </div>
         <div class="field">
           <label for="quality">輸出畫質</label>
           <select id="quality">
@@ -158,12 +208,18 @@
             <option value="1080">高畫質 1080×1920</option>
           </select>
         </div>
+        <div class="field">
+          <label for="fps">流暢度</label>
+          <select id="fps">
+            <option value="24">24 fps（較省空間）</option>
+            <option value="30" selected>30 fps（建議）</option>
+          </select>
+        </div>
       </div>
 
       <div class="actions">
-        <button id="playToggle" class="secondary" type="button">全部播放</button>
-        <button id="rewind" class="secondary" type="button">回到開頭</button>
-        <button id="exportBtn" class="primary export" type="button">輸出拼接影片</button>
+        <button id="playToggle" class="secondary" type="button">播放預覽</button>
+        <button id="exportBtn" class="primary" type="button">輸出 10 秒影片</button>
       </div>
 
       <div id="status" class="status" aria-live="polite">
@@ -180,7 +236,7 @@
       </div>
     </section>
 
-    <p class="note">影片只在你的手機瀏覽器內處理，不會上傳。輸出採即時錄製，30 秒影片約需播放 30 秒；輸出時請保持畫面開啟。</p>
+    <p class="note">影片只在手機內處理，不會上傳。輸出 10 秒約需等待 10 秒；請保持網頁開啟。若 iPhone 第一次沒有聲音，先按一次「播放預覽」再輸出。</p>
 
     <div id="hiddenVideos" class="hidden-videos" aria-hidden="true"></div>
   </main>
@@ -189,62 +245,77 @@
 (() => {
   'use strict';
 
-  const canvas = document.getElementById('preview');
+  const $ = id => document.getElementById(id);
+  const canvas = $('preview');
   const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
-  const shell = document.getElementById('canvasShell');
-  const hiddenVideos = document.getElementById('hiddenVideos');
-  const layout2Btn = document.getElementById('layout2');
-  const layout3Btn = document.getElementById('layout3');
-  const picker = document.getElementById('videoPicker');
-  const pickerText = document.getElementById('pickerText');
-  const selectedLabel = document.getElementById('selectedLabel');
-  const fileName = document.getElementById('fileName');
-  const zoom = document.getElementById('zoom');
-  const zoomValue = document.getElementById('zoomValue');
-  const resetSlotBtn = document.getElementById('resetSlot');
-  const removeSlotBtn = document.getElementById('removeSlot');
-  const playToggle = document.getElementById('playToggle');
-  const rewindBtn = document.getElementById('rewind');
-  const exportBtn = document.getElementById('exportBtn');
-  const audioSource = document.getElementById('audioSource');
-  const audio3Option = document.getElementById('audio3Option');
-  const quality = document.getElementById('quality');
-  const gestureHint = document.getElementById('gestureHint');
-  const status = document.getElementById('status');
-  const statusText = document.getElementById('statusText');
-  const statusPercent = document.getElementById('statusPercent');
-  const progressBar = document.getElementById('progressBar');
-  const result = document.getElementById('result');
-  const resultVideo = document.getElementById('resultVideo');
-  const downloadBtn = document.getElementById('downloadBtn');
-  const shareBtn = document.getElementById('shareBtn');
+  const shell = $('canvasShell');
+  const hiddenVideos = $('hiddenVideos');
+  const picker = $('videoPicker');
+  const layout2Btn = $('layout2');
+  const layout3Btn = $('layout3');
+  const customDurationWrap = $('customDurationWrap');
+  const customDurationInput = $('customDuration');
+  const selectedLabel = $('selectedLabel');
+  const fileName = $('fileName');
+  const replaceSlotBtn = $('replaceSlot');
+  const resetSlotBtn = $('resetSlot');
+  const removeSlotBtn = $('removeSlot');
+  const clipStart = $('clipStart');
+  const clipStartValue = $('clipStartValue');
+  const clipRange = $('clipRange');
+  const sourceDuration = $('sourceDuration');
+  const zoom = $('zoom');
+  const zoomValue = $('zoomValue');
+  const volume = $('volume');
+  const volumeValue = $('volumeValue');
+  const muteSlot = $('muteSlot');
+  const quality = $('quality');
+  const fps = $('fps');
+  const playToggle = $('playToggle');
+  const exportBtn = $('exportBtn');
+  const gestureHint = $('gestureHint');
+  const status = $('status');
+  const statusText = $('statusText');
+  const statusPercent = $('statusPercent');
+  const progressBar = $('progressBar');
+  const result = $('result');
+  const resultVideo = $('resultVideo');
+  const downloadBtn = $('downloadBtn');
+  const shareBtn = $('shareBtn');
 
   let layoutCount = 2;
   let selectedIndex = 0;
-  let drawing = true;
+  let outputDuration = 10;
+  let customDurationMode = false;
   let isExporting = false;
+  let isPreviewing = false;
+  let previewRaf = 0;
+  let renderRaf = 0;
   let exportBlob = null;
   let exportFile = null;
-  let rafId = 0;
   let audioContext = null;
   let audioDestination = null;
 
   const slots = Array.from({ length: 3 }, (_, index) => {
     const video = document.createElement('video');
     video.playsInline = true;
-    video.preload = 'metadata';
+    video.preload = 'auto';
     video.loop = false;
-    video.crossOrigin = 'anonymous';
+    video.controls = false;
+    video.disablePictureInPicture = true;
     hiddenVideos.appendChild(video);
     return {
       index,
       video,
       file: null,
       url: null,
-      scale: 1,
-      x: 0,
-      y: 0,
       ready: false,
+      scale: 1,
+      offsetX: 0,
+      offsetY: 0,
+      startTime: 0,
+      volume: 0.8,
+      muted: false,
       audioSourceNode: null,
       previewGain: null,
       exportGain: null,
@@ -252,19 +323,7 @@
   });
 
   function activeSlots() { return slots.slice(0, layoutCount); }
-
-  function setLayout(count) {
-    if (isExporting) return;
-    layoutCount = count;
-    layout2Btn.classList.toggle('active', count === 2);
-    layout3Btn.classList.toggle('active', count === 3);
-    audio3Option.hidden = count !== 3;
-    if (count === 2 && audioSource.value === '2') audioSource.value = 'none';
-    if (selectedIndex >= count) selectedIndex = count - 1;
-    pauseAll();
-    updateSelectedUI();
-    drawFrame();
-  }
+  function selectedSlot() { return slots[selectedIndex]; }
 
   function getRects() {
     const rects = [];
@@ -277,7 +336,7 @@
     return rects;
   }
 
-  function drawRoundedRect(x, y, w, h, r) {
+  function roundRect(x, y, w, h, r) {
     const rr = Math.min(r, w / 2, h / 2);
     ctx.beginPath();
     ctx.moveTo(x + rr, y);
@@ -294,11 +353,15 @@
     grad.addColorStop(1, '#0e141c');
     ctx.fillStyle = grad;
     ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
-    ctx.fillStyle = '#718195';
+
+    ctx.fillStyle = '#8b9daf';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.font = `600 ${Math.round(canvas.width * 0.033)}px -apple-system, sans-serif`;
-    ctx.fillText(`點選第 ${index + 1} 格加入影片`, rect.x + rect.w / 2, rect.y + rect.h / 2);
+    ctx.font = `700 ${Math.round(canvas.width * 0.034)}px -apple-system, sans-serif`;
+    ctx.fillText('＋ 點此加入影片', rect.x + rect.w / 2, rect.y + rect.h / 2 - canvas.width * 0.015);
+    ctx.fillStyle = '#607184';
+    ctx.font = `500 ${Math.round(canvas.width * 0.021)}px -apple-system, sans-serif`;
+    ctx.fillText(`第 ${index + 1} 格`, rect.x + rect.w / 2, rect.y + rect.h / 2 + canvas.width * 0.03);
   }
 
   function drawVideoCover(slot, rect) {
@@ -314,10 +377,14 @@
     const dh = v.videoHeight * scale;
     const maxX = Math.max(0, (dw - rect.w) / 2);
     const maxY = Math.max(0, (dh - rect.h) / 2);
-    slot.x = Math.max(-maxX, Math.min(maxX, slot.x));
-    slot.y = Math.max(-maxY, Math.min(maxY, slot.y));
-    const dx = rect.x + (rect.w - dw) / 2 + slot.x;
-    const dy = rect.y + (rect.h - dh) / 2 + slot.y;
+    const wantedX = slot.offsetX * rect.w;
+    const wantedY = slot.offsetY * rect.h;
+    const x = Math.max(-maxX, Math.min(maxX, wantedX));
+    const y = Math.max(-maxY, Math.min(maxY, wantedY));
+    slot.offsetX = rect.w ? x / rect.w : 0;
+    slot.offsetY = rect.h ? y / rect.h : 0;
+    const dx = rect.x + (rect.w - dw) / 2 + x;
+    const dy = rect.y + (rect.h - dh) / 2 + y;
 
     ctx.save();
     ctx.beginPath();
@@ -347,22 +414,149 @@
       ctx.strokeStyle = '#a8bed5';
       ctx.lineWidth = Math.max(4, canvas.width / 160);
       ctx.strokeRect(r.x + 3, r.y + 3, r.w - 6, r.h - 6);
-      ctx.fillStyle = 'rgba(12,18,25,.78)';
-      drawRoundedRect(14, r.y + 14, 88, 42, 14);
+      ctx.fillStyle = 'rgba(12,18,25,.80)';
+      roundRect(12, r.y + 12, 82, 38, 12);
       ctx.fill();
       ctx.fillStyle = '#e8eff6';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.font = `700 ${Math.round(canvas.width * 0.025)}px -apple-system, sans-serif`;
-      ctx.fillText(`第 ${selectedIndex + 1} 格`, 58, r.y + 35);
+      ctx.font = `700 ${Math.round(canvas.width * 0.023)}px -apple-system, sans-serif`;
+      ctx.fillText(`第 ${selectedIndex + 1} 格`, 53, r.y + 31);
       ctx.restore();
     }
   }
 
   function renderLoop() {
-    if (!drawing) return;
     drawFrame();
-    rafId = requestAnimationFrame(renderLoop);
+    renderRaf = requestAnimationFrame(renderLoop);
+  }
+
+  function setLayout(count) {
+    if (isExporting) return;
+    stopPreview(false);
+    layoutCount = count;
+    layout2Btn.classList.toggle('active', count === 2);
+    layout3Btn.classList.toggle('active', count === 3);
+    if (selectedIndex >= count) selectedIndex = count - 1;
+    updateSelectedUI();
+    drawFrame();
+  }
+
+  function setDuration(seconds, custom = false) {
+    if (isExporting) return;
+    stopPreview(false);
+    customDurationMode = custom;
+    outputDuration = Math.max(1, Math.min(60, Number(seconds) || 10));
+    document.querySelectorAll('[data-duration]').forEach(btn => {
+      btn.classList.toggle('active', custom ? btn.dataset.duration === 'custom' : Number(btn.dataset.duration) === outputDuration);
+    });
+    customDurationWrap.classList.toggle('show', custom);
+    activeSlots().forEach(slot => clampStartTime(slot));
+    exportBtn.textContent = `輸出 ${formatSimple(outputDuration)}影片`;
+    updateSelectedUI();
+  }
+
+  function clampStartTime(slot) {
+    if (!slot.ready || !Number.isFinite(slot.video.duration)) {
+      slot.startTime = 0;
+      return;
+    }
+    const max = Math.max(0, slot.video.duration - outputDuration);
+    slot.startTime = Math.max(0, Math.min(max, slot.startTime));
+  }
+
+  function formatSimple(seconds) {
+    const n = Number(seconds);
+    return Number.isInteger(n) ? `${n} 秒` : `${n.toFixed(1)} 秒`;
+  }
+
+  function formatTime(seconds, decimals = true) {
+    const safe = Math.max(0, Number(seconds) || 0);
+    const m = Math.floor(safe / 60);
+    const s = safe - m * 60;
+    const body = decimals ? s.toFixed(1).padStart(4, '0') : Math.floor(s).toString().padStart(2, '0');
+    return `${String(m).padStart(2, '0')}:${body}`;
+  }
+
+  function shorten(text, max) {
+    if (!text || text.length <= max) return text || '';
+    const dot = text.lastIndexOf('.');
+    const ext = dot >= 0 ? text.slice(dot) : '';
+    return text.slice(0, Math.max(6, max - ext.length - 1)) + '…' + ext;
+  }
+
+  function updateSelectedUI() {
+    const slot = selectedSlot();
+    const ready = slot.ready;
+    selectedLabel.textContent = `第 ${selectedIndex + 1} 格設定`;
+    fileName.textContent = ready && slot.file ? shorten(slot.file.name, 28) : '尚未加入影片';
+    replaceSlotBtn.textContent = ready ? '更換影片' : '選擇影片';
+    resetSlotBtn.disabled = !ready || isExporting;
+    removeSlotBtn.disabled = !ready || isExporting;
+    clipStart.disabled = !ready || isExporting;
+    zoom.disabled = !ready || isExporting;
+    volume.disabled = !ready || isExporting;
+    muteSlot.disabled = !ready || isExporting;
+
+    if (!ready) {
+      clipStart.min = '0';
+      clipStart.max = '0';
+      clipStart.value = '0';
+      clipStartValue.textContent = '00:00.0';
+      clipRange.textContent = '尚未加入影片';
+      sourceDuration.textContent = '原片 00:00';
+      zoom.value = '1';
+      zoomValue.textContent = '100%';
+      volume.value = '0.8';
+      volumeValue.textContent = '80%';
+      muteSlot.checked = false;
+      return;
+    }
+
+    clampStartTime(slot);
+    const duration = Number(slot.video.duration) || 0;
+    const maxStart = Math.max(0, duration - outputDuration);
+    clipStart.max = String(maxStart);
+    clipStart.value = String(slot.startTime);
+    clipStartValue.textContent = formatTime(slot.startTime);
+    clipRange.textContent = `${formatTime(slot.startTime)} ～ ${formatTime(slot.startTime + outputDuration)}`;
+    sourceDuration.textContent = `原片 ${formatTime(duration, false)}`;
+    zoom.value = String(slot.scale);
+    zoomValue.textContent = `${Math.round(slot.scale * 100)}%`;
+    volume.value = String(slot.volume);
+    volumeValue.textContent = `${Math.round(slot.volume * 100)}%`;
+    muteSlot.checked = slot.muted;
+  }
+
+  function openPickerFor(index) {
+    if (isExporting) return;
+    selectedIndex = Math.max(0, Math.min(layoutCount - 1, index));
+    updateSelectedUI();
+    picker.value = '';
+    picker.click();
+  }
+
+  async function waitForMedia(video, events, timeout = 8000) {
+    if (events.includes('loadeddata') && video.readyState >= 2) return;
+    await new Promise((resolve, reject) => {
+      let done = false;
+      const clean = () => {
+        events.forEach(e => video.removeEventListener(e, onReady));
+        video.removeEventListener('error', onError);
+        clearTimeout(timer);
+      };
+      const finish = (fn, value) => {
+        if (done) return;
+        done = true;
+        clean();
+        fn(value);
+      };
+      const onReady = () => finish(resolve);
+      const onError = () => finish(reject, new Error('影片讀取失敗'));
+      const timer = setTimeout(() => finish(reject, new Error('影片讀取逾時')), timeout);
+      events.forEach(e => video.addEventListener(e, onReady, { once: true }));
+      video.addEventListener('error', onError, { once: true });
+    });
   }
 
   async function loadVideo(file) {
@@ -370,14 +564,17 @@
       alert('請選擇影片檔案。');
       return;
     }
-    const slot = slots[selectedIndex];
+    stopPreview(false);
+    const slot = selectedSlot();
     if (slot.url) URL.revokeObjectURL(slot.url);
+    slot.video.pause();
     slot.file = file;
     slot.url = URL.createObjectURL(file);
     slot.ready = false;
     slot.scale = 1;
-    slot.x = 0;
-    slot.y = 0;
+    slot.offsetX = 0;
+    slot.offsetY = 0;
+    slot.startTime = 0;
     slot.video.src = slot.url;
     slot.video.load();
 
@@ -385,61 +582,38 @@
     setStatus(`正在讀取第 ${selectedIndex + 1} 格影片…`, 0);
 
     try {
-      await new Promise((resolve, reject) => {
-        const onLoaded = () => { cleanup(); resolve(); };
-        const onError = () => { cleanup(); reject(new Error('無法讀取影片')); };
-        const cleanup = () => {
-          slot.video.removeEventListener('loadeddata', onLoaded);
-          slot.video.removeEventListener('error', onError);
-        };
-        slot.video.addEventListener('loadeddata', onLoaded, { once: true });
-        slot.video.addEventListener('error', onError, { once: true });
-      });
+      await waitForMedia(slot.video, ['loadeddata', 'canplay']);
       slot.ready = true;
-      slot.video.currentTime = 0;
       await ensureAudioNode(slot).catch(() => {});
+      clampStartTime(slot);
+      await seekSlot(slot, slot.startTime).catch(() => {});
       setStatus('影片已加入', 100);
-      setTimeout(() => status.classList.remove('show'), 800);
+      setTimeout(() => { if (!isExporting) status.classList.remove('show'); }, 800);
       gestureHint.classList.remove('hide');
       setTimeout(() => gestureHint.classList.add('hide'), 2600);
     } catch (err) {
+      console.error(err);
       slot.ready = false;
       alert('這支影片無法讀取，建議改用 MP4 或較短的影片。');
       status.classList.remove('show');
     }
-    picker.value = '';
     updateSelectedUI();
     drawFrame();
   }
 
-  function updateSelectedUI() {
-    const slot = slots[selectedIndex];
-    selectedLabel.textContent = `目前選取：第 ${selectedIndex + 1} 格`;
-    pickerText.textContent = slot.file ? `更換第 ${selectedIndex + 1} 格影片` : `加入第 ${selectedIndex + 1} 格影片`;
-    fileName.textContent = slot.file ? shorten(slot.file.name, 22) : '尚未加入影片';
-    zoom.value = String(slot.scale);
-    zoomValue.textContent = `${Math.round(slot.scale * 100)}%`;
-  }
-
-  function shorten(text, max) {
-    if (text.length <= max) return text;
-    const dot = text.lastIndexOf('.');
-    const ext = dot >= 0 ? text.slice(dot) : '';
-    return text.slice(0, Math.max(6, max - ext.length - 1)) + '…' + ext;
-  }
-
-  function resetSlot(index = selectedIndex) {
-    const slot = slots[index];
+  function resetSlot() {
+    const slot = selectedSlot();
     slot.scale = 1;
-    slot.x = 0;
-    slot.y = 0;
+    slot.offsetX = 0;
+    slot.offsetY = 0;
     updateSelectedUI();
     drawFrame();
   }
 
-  function removeSlot(index = selectedIndex) {
+  function removeSlot() {
     if (isExporting) return;
-    const slot = slots[index];
+    stopPreview(false);
+    const slot = selectedSlot();
     slot.video.pause();
     slot.video.removeAttribute('src');
     slot.video.load();
@@ -448,96 +622,106 @@
     slot.file = null;
     slot.ready = false;
     slot.scale = 1;
-    slot.x = 0;
-    slot.y = 0;
+    slot.offsetX = 0;
+    slot.offsetY = 0;
+    slot.startTime = 0;
     updateSelectedUI();
     drawFrame();
   }
 
-  function selectByCanvasPoint(clientX, clientY) {
+  function getSlotIndex(clientY) {
     const bounds = canvas.getBoundingClientRect();
-    const y = (clientY - bounds.top) / bounds.height * canvas.height;
-    selectedIndex = Math.max(0, Math.min(layoutCount - 1, Math.floor(y / (canvas.height / layoutCount))));
-    updateSelectedUI();
-    drawFrame();
+    const y = Math.max(0, Math.min(bounds.height - 0.001, clientY - bounds.top));
+    return Math.floor(y / (bounds.height / layoutCount));
   }
 
-  const touches = new Map();
-  let dragStart = null;
-  let pinchStart = null;
+  const pointers = new Map();
+  let gesture = null;
 
-  shell.addEventListener('pointerdown', (e) => {
+  shell.addEventListener('pointerdown', e => {
     if (isExporting) return;
     shell.setPointerCapture?.(e.pointerId);
-    touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    if (touches.size === 1) {
-      selectByCanvasPoint(e.clientX, e.clientY);
-      const slot = slots[selectedIndex];
-      dragStart = { pointerId: e.pointerId, x: e.clientX, y: e.clientY, slotX: slot.x, slotY: slot.y };
-      pinchStart = null;
-    } else if (touches.size === 2) {
-      const pts = [...touches.values()];
-      const distance = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
-      pinchStart = { distance, scale: slots[selectedIndex].scale };
-      dragStart = null;
+    const index = getSlotIndex(e.clientY);
+    selectedIndex = index;
+    updateSelectedUI();
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    const slot = selectedSlot();
+
+    if (pointers.size === 1) {
+      gesture = {
+        type: 'drag',
+        pointerId: e.pointerId,
+        startX: e.clientX,
+        startY: e.clientY,
+        moved: false,
+        offsetX: slot.offsetX,
+        offsetY: slot.offsetY,
+        slotIndex: index,
+      };
+    } else if (pointers.size === 2) {
+      const pts = [...pointers.values()];
+      gesture = {
+        type: 'pinch',
+        distance: Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y),
+        scale: slot.scale,
+        slotIndex: selectedIndex,
+      };
     }
     gestureHint.classList.add('hide');
     e.preventDefault();
   });
 
-  shell.addEventListener('pointermove', (e) => {
-    if (!touches.has(e.pointerId) || isExporting) return;
-    touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    const slot = slots[selectedIndex];
-    if (touches.size >= 2 && pinchStart) {
-      const pts = [...touches.values()].slice(0, 2);
+  shell.addEventListener('pointermove', e => {
+    if (!pointers.has(e.pointerId) || isExporting) return;
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    const slot = selectedSlot();
+
+    if (pointers.size >= 2 && gesture?.type === 'pinch') {
+      const pts = [...pointers.values()].slice(0, 2);
       const distance = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
-      slot.scale = Math.max(1, Math.min(3, pinchStart.scale * distance / Math.max(1, pinchStart.distance)));
+      slot.scale = Math.max(1, Math.min(3, gesture.scale * distance / Math.max(1, gesture.distance)));
       zoom.value = String(slot.scale);
       zoomValue.textContent = `${Math.round(slot.scale * 100)}%`;
-    } else if (dragStart && dragStart.pointerId === e.pointerId && slot.ready) {
+    } else if (gesture?.type === 'drag' && gesture.pointerId === e.pointerId && slot.ready) {
+      const dx = e.clientX - gesture.startX;
+      const dy = e.clientY - gesture.startY;
+      if (Math.hypot(dx, dy) > 5) gesture.moved = true;
       const bounds = canvas.getBoundingClientRect();
-      const ratioX = canvas.width / bounds.width;
-      const ratioY = canvas.height / bounds.height;
-      slot.x = dragStart.slotX + (e.clientX - dragStart.x) * ratioX;
-      slot.y = dragStart.slotY + (e.clientY - dragStart.y) * ratioY;
+      const slotHeight = bounds.height / layoutCount;
+      slot.offsetX = gesture.offsetX + dx / bounds.width;
+      slot.offsetY = gesture.offsetY + dy / slotHeight;
     }
     drawFrame();
     e.preventDefault();
   });
 
   function endPointer(e) {
-    touches.delete(e.pointerId);
-    if (touches.size < 2) pinchStart = null;
-    if (touches.size === 0) dragStart = null;
+    const previousGesture = gesture;
+    pointers.delete(e.pointerId);
+    if (pointers.size === 0) {
+      gesture = null;
+      const index = previousGesture?.slotIndex ?? selectedIndex;
+      const slot = slots[index];
+      if (previousGesture?.type === 'drag' && !previousGesture.moved && !slot.ready) {
+        setTimeout(() => openPickerFor(index), 0);
+      }
+    } else if (pointers.size === 1) {
+      const [remaining] = [...pointers.entries()];
+      const slot = selectedSlot();
+      gesture = {
+        type: 'drag',
+        pointerId: remaining[0],
+        startX: remaining[1].x,
+        startY: remaining[1].y,
+        moved: true,
+        offsetX: slot.offsetX,
+        offsetY: slot.offsetY,
+        slotIndex: selectedIndex,
+      };
+    }
   }
   shell.addEventListener('pointerup', endPointer);
   shell.addEventListener('pointercancel', endPointer);
-
-  async function playAll() {
-    const ready = activeSlots().filter(s => s.ready);
-    if (!ready.length) return;
-    await resumeAudio();
-    await Promise.all(ready.map(async slot => {
-      try { await slot.video.play(); } catch (_) {}
-    }));
-    playToggle.textContent = '全部暫停';
-  }
-
-  function pauseAll() {
-    activeSlots().forEach(s => s.video.pause());
-    playToggle.textContent = '全部播放';
-  }
-
-  function rewindAll() {
-    activeSlots().forEach(s => { if (s.ready) s.video.currentTime = 0; });
-    drawFrame();
-  }
-
-  function allPlaying() {
-    const ready = activeSlots().filter(s => s.ready);
-    return ready.length > 0 && ready.every(s => !s.video.paused);
-  }
 
   async function ensureAudioContext() {
     if (!audioContext) {
@@ -550,41 +734,165 @@
   }
 
   async function resumeAudio() {
-    if (!audioContext) return;
+    await ensureAudioContext();
     if (audioContext.state === 'suspended') await audioContext.resume();
   }
 
   async function ensureAudioNode(slot) {
     await ensureAudioContext();
     if (slot.audioSourceNode) return;
+    const source = audioContext.createMediaElementSource(slot.video);
+    const previewGain = audioContext.createGain();
+    const exportGain = audioContext.createGain();
+    previewGain.gain.value = 0;
+    exportGain.gain.value = 0;
+    source.connect(previewGain).connect(audioContext.destination);
+    source.connect(exportGain).connect(audioDestination);
+    slot.audioSourceNode = source;
+    slot.previewGain = previewGain;
+    slot.exportGain = exportGain;
+  }
+
+  function mixScale() {
+    const audible = activeSlots().filter(s => s.ready && !s.muted && s.volume > 0).length;
+    return audible > 1 ? 1 / Math.sqrt(audible) : 1;
+  }
+
+  function applyPreviewAudio() {
+    const scale = mixScale();
+    slots.forEach(slot => {
+      if (slot.previewGain) slot.previewGain.gain.value = slot.ready && !slot.muted ? slot.volume * scale : 0;
+      if (slot.exportGain) slot.exportGain.gain.value = 0;
+    });
+  }
+
+  function applyExportAudio() {
+    const scale = mixScale();
+    slots.forEach(slot => {
+      if (slot.previewGain) slot.previewGain.gain.value = 0;
+      if (slot.exportGain) slot.exportGain.gain.value = slot.ready && !slot.muted ? slot.volume * scale : 0;
+    });
+  }
+
+  function silenceAudio() {
+    slots.forEach(slot => {
+      if (slot.previewGain) slot.previewGain.gain.value = 0;
+      if (slot.exportGain) slot.exportGain.gain.value = 0;
+    });
+  }
+
+  function validateClips(showAlert = true) {
+    const actives = activeSlots();
+    if (!actives.every(s => s.ready)) {
+      if (showAlert) alert(`請先加入 ${layoutCount} 支影片。`);
+      return false;
+    }
+    const tooShort = actives.find(s => !Number.isFinite(s.video.duration) || s.video.duration + 0.03 < outputDuration);
+    if (tooShort) {
+      if (showAlert) alert(`第 ${tooShort.index + 1} 格影片只有 ${formatSimple(tooShort.video.duration || 0)}，不足輸出 ${formatSimple(outputDuration)}。\n請換較長的影片或縮短成品長度。`);
+      return false;
+    }
+    actives.forEach(clampStartTime);
+    return true;
+  }
+
+  async function seekSlot(slot, time) {
+    const v = slot.video;
+    if (!slot.ready) return;
+    const target = Math.max(0, Math.min(Number(v.duration) || time, time));
+    if (Math.abs(v.currentTime - target) < 0.025 && v.readyState >= 2) return;
+    await new Promise(resolve => {
+      let finished = false;
+      const done = () => {
+        if (finished) return;
+        finished = true;
+        v.removeEventListener('seeked', done);
+        clearTimeout(timer);
+        resolve();
+      };
+      const timer = setTimeout(done, 1800);
+      v.addEventListener('seeked', done, { once: true });
+      try { v.currentTime = target; } catch (_) { done(); }
+    });
+  }
+
+  async function seekAllToStarts() {
+    await Promise.all(activeSlots().map(slot => seekSlot(slot, slot.startTime)));
+    drawFrame();
+  }
+
+  function pauseAll() {
+    activeSlots().forEach(slot => slot.video.pause());
+  }
+
+  async function playAllVideos() {
+    const results = await Promise.allSettled(activeSlots().map(slot => slot.video.play()));
+    const rejected = results.findIndex(r => r.status === 'rejected');
+    if (rejected >= 0) throw new Error(`第 ${rejected + 1} 格無法開始播放`);
+  }
+
+  async function waitForAdvance(timeout = 2200) {
+    const baselines = activeSlots().map(slot => slot.video.currentTime);
+    const start = performance.now();
+    await new Promise((resolve, reject) => {
+      const tick = () => {
+        const stalled = activeSlots().find((slot, i) => slot.video.currentTime < baselines[i] + 0.045);
+        if (!stalled) return resolve();
+        if (performance.now() - start > timeout) return reject(new Error(`第 ${stalled.index + 1} 格影片沒有開始播放`));
+        requestAnimationFrame(tick);
+      };
+      tick();
+    });
+  }
+
+  function primePlaybackImmediately() {
+    try { resumeAudio().catch(() => {}); } catch (_) {}
+    const promises = activeSlots().filter(slot => slot.ready).map(slot => {
+      try { return slot.video.play(); }
+      catch (err) { return Promise.reject(err); }
+    });
+    return Promise.allSettled(promises);
+  }
+
+  async function startPreview() {
+    if (isExporting || isPreviewing) return;
+    const primePromise = primePlaybackImmediately();
+    if (!validateClips(true)) { pauseAll(); return; }
+    isPreviewing = true;
+    playToggle.textContent = '暫停預覽';
     try {
-      const source = audioContext.createMediaElementSource(slot.video);
-      const previewGain = audioContext.createGain();
-      const exportGain = audioContext.createGain();
-      previewGain.gain.value = 1;
-      exportGain.gain.value = 0;
-      source.connect(previewGain).connect(audioContext.destination);
-      source.connect(exportGain).connect(audioDestination);
-      slot.audioSourceNode = source;
-      slot.previewGain = previewGain;
-      slot.exportGain = exportGain;
+      await primePromise;
+      pauseAll();
+      await seekAllToStarts();
+      await Promise.all(activeSlots().map(slot => ensureAudioNode(slot)));
+      await resumeAudio();
+      applyPreviewAudio();
+      await playAllVideos();
+      const started = performance.now();
+      const tick = () => {
+        if (!isPreviewing) return;
+        const elapsed = (performance.now() - started) / 1000;
+        if (elapsed >= outputDuration) {
+          stopPreview(true);
+          return;
+        }
+        previewRaf = requestAnimationFrame(tick);
+      };
+      tick();
     } catch (err) {
-      console.warn('Audio node unavailable:', err);
+      console.error(err);
+      stopPreview(false);
+      alert(`${err.message || '預覽失敗'}。\n請再按一次播放預覽。`);
     }
   }
 
-  function setAudioMix(selected) {
-    slots.forEach((slot, i) => {
-      if (slot.exportGain) slot.exportGain.gain.value = String(i) === selected ? 1 : 0;
-      if (slot.previewGain) slot.previewGain.gain.value = String(i) === selected ? 1 : 0;
-    });
-  }
-
-  function restorePreviewAudio() {
-    slots.forEach(slot => {
-      if (slot.exportGain) slot.exportGain.gain.value = 0;
-      if (slot.previewGain) slot.previewGain.gain.value = 1;
-    });
+  async function stopPreview(reset = false) {
+    isPreviewing = false;
+    cancelAnimationFrame(previewRaf);
+    pauseAll();
+    silenceAudio();
+    playToggle.textContent = '播放預覽';
+    if (reset) await seekAllToStarts().catch(() => {});
   }
 
   function getOutputMime() {
@@ -599,101 +907,90 @@
     return candidates.find(type => window.MediaRecorder && MediaRecorder.isTypeSupported(type)) || '';
   }
 
-  function getDuration() {
-    const durations = activeSlots().map(s => Number(s.video.duration)).filter(Number.isFinite).filter(d => d > 0);
-    return durations.length ? Math.min(...durations) : 0;
-  }
-
-  async function seekAll(time) {
-    await Promise.all(activeSlots().filter(s => s.ready).map(slot => new Promise(resolve => {
-      const v = slot.video;
-      if (Math.abs(v.currentTime - time) < 0.03) return resolve();
-      const done = () => resolve();
-      v.addEventListener('seeked', done, { once: true });
-      try { v.currentTime = time; } catch (_) { resolve(); }
-      setTimeout(resolve, 1200);
-    })));
-  }
-
   async function exportVideo() {
     if (isExporting) return;
-    const actives = activeSlots();
-    if (!actives.every(s => s.ready)) {
-      alert(`請先加入 ${layoutCount} 支影片。`);
-      return;
-    }
+    const primePromise = primePlaybackImmediately();
+    if (!validateClips(true)) { pauseAll(); return; }
     if (!window.MediaRecorder || !canvas.captureStream) {
       alert('目前瀏覽器不支援影片輸出，請改用最新版 Safari 或 Chrome。');
       return;
     }
 
-    const duration = getDuration();
-    if (!duration) {
-      alert('無法取得影片長度，請重新加入影片。');
-      return;
-    }
-
-    const estimatedSeconds = Math.ceil(duration);
-    if (duration > 120 && !confirm(`影片約 ${estimatedSeconds} 秒，手機輸出較久，建議先裁短。仍要繼續嗎？`)) return;
-
     isExporting = true;
-    exportBtn.disabled = true;
-    layout2Btn.disabled = true;
-    layout3Btn.disabled = true;
-    picker.disabled = true;
+    await stopPreview(false);
+    setUiDisabled(true);
     result.classList.remove('show');
     status.classList.add('show');
-    setStatus('準備輸出…', 0);
-    pauseAll();
+    setStatus('準備同步影片…', 0);
 
+    const oldW = canvas.width;
+    const oldH = canvas.height;
     const w = Number(quality.value);
+    const frameRate = Number(fps.value);
     canvas.width = w;
     canvas.height = Math.round(w * 16 / 9);
     drawFrame();
 
-    let recorder;
+    let recorder = null;
     let chunks = [];
     let stoppedResolve;
     const stopped = new Promise(resolve => { stoppedResolve = resolve; });
 
     try {
-      await seekAll(0);
-      await Promise.all(actives.map(slot => ensureAudioNode(slot).catch(() => {})));
-      await resumeAudio().catch(() => {});
+      await primePromise;
+      pauseAll();
+      await Promise.all(activeSlots().map(slot => ensureAudioNode(slot)));
+      await resumeAudio();
 
-      const stream = canvas.captureStream(30);
-      const selectedAudio = audioSource.value;
-      if (selectedAudio !== 'none' && audioDestination) {
-        setAudioMix(selectedAudio);
-        const track = audioDestination.stream.getAudioTracks()[0];
-        if (track) stream.addTrack(track);
-      } else {
-        setAudioMix('none');
-      }
+      // 先跑一次短暫同步檢查，再回到各自選定的起點。
+      await seekAllToStarts();
+      silenceAudio();
+      await playAllVideos();
+      await waitForAdvance();
+      pauseAll();
+      await seekAllToStarts();
+
+      const stream = canvas.captureStream(frameRate);
+      applyExportAudio();
+      const audioTrack = audioDestination?.stream.getAudioTracks?.()[0];
+      if (audioTrack) stream.addTrack(audioTrack);
 
       const mimeType = getOutputMime();
       const options = {
-        videoBitsPerSecond: w >= 1080 ? 9000000 : (w >= 720 ? 5500000 : 3200000),
-        audioBitsPerSecond: 128000,
+        videoBitsPerSecond: w >= 1080 ? 9000000 : (w >= 720 ? 5200000 : 2900000),
+        audioBitsPerSecond: 160000,
       };
       if (mimeType) options.mimeType = mimeType;
+
       recorder = new MediaRecorder(stream, options);
-      recorder.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
-      recorder.onerror = e => { console.error(e); };
+      recorder.ondataavailable = event => { if (event.data?.size) chunks.push(event.data); };
+      recorder.onerror = event => console.error('Recorder error:', event);
       recorder.onstop = stoppedResolve;
 
-      const start = performance.now();
-      recorder.start(1000);
-      await Promise.all(actives.map(async slot => {
-        try { await slot.video.play(); } catch (_) {}
-      }));
+      setStatus('開始輸出…', 1);
+      recorder.start(500);
+      await playAllVideos();
+      const started = performance.now();
 
-      await new Promise(resolve => {
+      await new Promise((resolve, reject) => {
+        let lastTimes = activeSlots().map(slot => slot.video.currentTime);
+        let lastMoveAt = performance.now();
         const tick = () => {
-          const elapsed = (performance.now() - start) / 1000;
-          const pct = Math.min(99, elapsed / duration * 100);
-          setStatus(`正在輸出，請保持畫面開啟（${Math.min(duration, elapsed).toFixed(1)} / ${duration.toFixed(1)} 秒）`, pct);
-          if (elapsed >= duration || actives.some(s => s.video.ended)) return resolve();
+          const now = performance.now();
+          const elapsed = (now - started) / 1000;
+          const currentTimes = activeSlots().map(slot => slot.video.currentTime);
+          const moved = currentTimes.every((time, i) => time > lastTimes[i] + 0.001 || elapsed >= outputDuration - 0.15);
+          if (moved) {
+            lastTimes = currentTimes;
+            lastMoveAt = now;
+          }
+          if (now - lastMoveAt > 1800) {
+            const stuck = activeSlots().find((slot, i) => currentTimes[i] <= lastTimes[i] + 0.001);
+            return reject(new Error(`第 ${stuck?.index + 1 || '?'} 格影片播放中斷`));
+          }
+          const pct = Math.min(99, elapsed / outputDuration * 100);
+          setStatus(`正在輸出（${Math.min(outputDuration, elapsed).toFixed(1)} / ${outputDuration.toFixed(1)} 秒）`, pct);
+          if (elapsed >= outputDuration) return resolve();
           requestAnimationFrame(tick);
         };
         tick();
@@ -704,10 +1001,11 @@
       await stopped;
       setStatus('正在整理影片檔…', 99);
 
-      const actualType = recorder.mimeType || mimeType || (chunks[0]?.type) || 'video/webm';
+      const actualType = recorder.mimeType || mimeType || chunks[0]?.type || 'video/webm';
       exportBlob = new Blob(chunks, { type: actualType });
+      if (!exportBlob.size) throw new Error('沒有產生影片資料');
       const ext = actualType.includes('mp4') ? 'mp4' : 'webm';
-      const filename = `手機影片拼接_${layoutCount}格_${dateStamp()}.${ext}`;
+      const filename = `手機影片拼接_${layoutCount}格_${formatSimple(outputDuration).replace(/\s/g, '')}_${dateStamp()}.${ext}`;
       exportFile = new File([exportBlob], filename, { type: actualType });
       const outputUrl = URL.createObjectURL(exportBlob);
       if (resultVideo.src) URL.revokeObjectURL(resultVideo.src);
@@ -720,24 +1018,45 @@
       setTimeout(() => result.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
     } catch (err) {
       console.error(err);
-      alert(`輸出失敗：${err?.message || '未知錯誤'}\n\n可嘗試縮短影片、降低畫質，或關閉其他 App 後重試。`);
+      try {
+        if (recorder?.state === 'recording') recorder.stop();
+      } catch (_) {}
+      alert(`輸出失敗：${err?.message || '未知錯誤'}\n\n請先按一次「播放預覽」，確認每格都會動，再重新輸出。`);
       status.classList.remove('show');
     } finally {
-      restorePreviewAudio();
+      pauseAll();
+      silenceAudio();
+      canvas.width = oldW;
+      canvas.height = oldH;
       isExporting = false;
-      exportBtn.disabled = false;
-      layout2Btn.disabled = false;
-      layout3Btn.disabled = false;
-      picker.disabled = false;
-      canvas.width = 720;
-      canvas.height = 1280;
+      setUiDisabled(false);
+      updateSelectedUI();
       drawFrame();
     }
   }
 
+  function setUiDisabled(disabled) {
+    layout2Btn.disabled = disabled;
+    layout3Btn.disabled = disabled;
+    document.querySelectorAll('[data-duration]').forEach(btn => btn.disabled = disabled);
+    customDurationInput.disabled = disabled;
+    picker.disabled = disabled;
+    replaceSlotBtn.disabled = disabled;
+    resetSlotBtn.disabled = disabled || !selectedSlot().ready;
+    removeSlotBtn.disabled = disabled || !selectedSlot().ready;
+    clipStart.disabled = disabled || !selectedSlot().ready;
+    zoom.disabled = disabled || !selectedSlot().ready;
+    volume.disabled = disabled || !selectedSlot().ready;
+    muteSlot.disabled = disabled || !selectedSlot().ready;
+    quality.disabled = disabled;
+    fps.disabled = disabled;
+    playToggle.disabled = disabled;
+    exportBtn.disabled = disabled;
+  }
+
   function setStatus(text, percent) {
     statusText.textContent = text;
-    const p = Math.max(0, Math.min(100, percent));
+    const p = Math.max(0, Math.min(100, Number(percent) || 0));
     statusPercent.textContent = `${Math.round(p)}%`;
     progressBar.style.width = `${p}%`;
   }
@@ -763,29 +1082,66 @@
 
   layout2Btn.addEventListener('click', () => setLayout(2));
   layout3Btn.addEventListener('click', () => setLayout(3));
+  document.querySelectorAll('[data-duration]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.dataset.duration === 'custom') setDuration(customDurationInput.value, true);
+      else setDuration(Number(btn.dataset.duration), false);
+    });
+  });
+  customDurationInput.addEventListener('change', () => setDuration(customDurationInput.value, true));
+  customDurationInput.addEventListener('input', () => {
+    const value = Math.max(1, Math.min(60, Number(customDurationInput.value) || 1));
+    outputDuration = value;
+    activeSlots().forEach(clampStartTime);
+    exportBtn.textContent = `輸出 ${formatSimple(outputDuration)}影片`;
+    updateSelectedUI();
+  });
+
   picker.addEventListener('change', () => loadVideo(picker.files?.[0]));
-  resetSlotBtn.addEventListener('click', () => resetSlot());
-  removeSlotBtn.addEventListener('click', () => removeSlot());
-  zoom.addEventListener('input', () => {
-    slots[selectedIndex].scale = Number(zoom.value);
-    zoomValue.textContent = `${Math.round(Number(zoom.value) * 100)}%`;
+  replaceSlotBtn.addEventListener('click', () => openPickerFor(selectedIndex));
+  resetSlotBtn.addEventListener('click', resetSlot);
+  removeSlotBtn.addEventListener('click', removeSlot);
+
+  clipStart.addEventListener('input', async () => {
+    stopPreview(false);
+    const slot = selectedSlot();
+    slot.startTime = Number(clipStart.value);
+    clipStartValue.textContent = formatTime(slot.startTime);
+    clipRange.textContent = `${formatTime(slot.startTime)} ～ ${formatTime(slot.startTime + outputDuration)}`;
+    await seekSlot(slot, slot.startTime).catch(() => {});
     drawFrame();
   });
-  playToggle.addEventListener('click', () => allPlaying() ? pauseAll() : playAll());
-  rewindBtn.addEventListener('click', rewindAll);
+  zoom.addEventListener('input', () => {
+    const slot = selectedSlot();
+    slot.scale = Number(zoom.value);
+    zoomValue.textContent = `${Math.round(slot.scale * 100)}%`;
+    drawFrame();
+  });
+  volume.addEventListener('input', () => {
+    const slot = selectedSlot();
+    slot.volume = Number(volume.value);
+    volumeValue.textContent = `${Math.round(slot.volume * 100)}%`;
+    if (isPreviewing) applyPreviewAudio();
+  });
+  muteSlot.addEventListener('change', () => {
+    selectedSlot().muted = muteSlot.checked;
+    if (isPreviewing) applyPreviewAudio();
+  });
+
+  playToggle.addEventListener('click', () => isPreviewing ? stopPreview(false) : startPreview());
   exportBtn.addEventListener('click', exportVideo);
   shareBtn.addEventListener('click', shareResult);
 
-  window.addEventListener('beforeunload', () => {
-    cancelAnimationFrame(rafId);
-    slots.forEach(s => { if (s.url) URL.revokeObjectURL(s.url); });
-  });
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden && isExporting) {
-      // The recorder may continue, but the UI makes the limitation explicit.
-    }
+    if (document.hidden && isPreviewing) stopPreview(false);
+  });
+  window.addEventListener('beforeunload', () => {
+    cancelAnimationFrame(renderRaf);
+    cancelAnimationFrame(previewRaf);
+    slots.forEach(slot => { if (slot.url) URL.revokeObjectURL(slot.url); });
   });
 
+  setDuration(10, false);
   updateSelectedUI();
   renderLoop();
 })();
