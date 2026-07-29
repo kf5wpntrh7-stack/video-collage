@@ -2,1148 +2,250 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="theme-color" content="#10151d" />
-  <title>銅鑼燒工作室｜手機影片拼接</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <meta name="theme-color" content="#151a22" />
+  <title>銅鑼燒工作室｜手機影片拼接 2 格測試版</title>
   <style>
-    :root {
-      color-scheme: dark;
-      --bg: #0e131a;
-      --panel: #171e28;
-      --panel-2: #202a36;
-      --panel-3: #111821;
-      --line: #344355;
-      --text: #edf2f7;
-      --muted: #9eabba;
-      --accent: #7891ad;
-      --accent-2: #b7c8d9;
-      --danger: #d39a9a;
-      --ok: #8caf99;
-      --radius: 15px;
-    }
-
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif; }
-    body { padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom); overscroll-behavior-y: none; }
-    button, select, input { font: inherit; }
-    button { touch-action: manipulation; }
-    button:disabled, input:disabled, select:disabled { opacity: .46; }
-
-    .app { width: min(100%, 520px); margin: 0 auto; padding: 12px 0 26px; }
-    header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
-    .brand h1 { font-size: 19px; line-height: 1.2; margin: 0 0 3px; letter-spacing: .03em; }
-    .brand p { font-size: 11px; color: var(--muted); margin: 0; }
-    .badge { padding: 6px 9px; border: 1px solid var(--line); border-radius: 999px; color: var(--accent-2); background: var(--panel); font-size: 11px; white-space: nowrap; }
-
-    .panel { background: var(--panel); border: 1px solid #253140; border-radius: var(--radius); padding: 11px; box-shadow: 0 10px 30px rgba(0,0,0,.18); }
-    .topbar { display: flex; align-items: end; justify-content: space-between; gap: 10px; margin-bottom: 9px; }
-    .group-label { display: block; margin: 0 0 5px 2px; font-size: 10px; color: var(--muted); }
-    .segmented { display: inline-grid; grid-auto-flow: column; gap: 3px; padding: 3px; border-radius: 10px; background: #10161e; border: 1px solid #283545; }
-    .segmented button { min-width: 54px; min-height: 34px; border: 0; border-radius: 7px; padding: 6px 12px; background: transparent; color: var(--muted); font-weight: 700; font-size: 13px; }
-    .segmented button.active { background: var(--panel-2); color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,.25); }
-
-    .duration-wrap { text-align: right; }
-    .duration-segment button { min-width: 48px; padding-inline: 9px; }
-    .custom-duration { display: none; margin-top: 5px; align-items: center; justify-content: flex-end; gap: 5px; color: var(--muted); font-size: 11px; }
-    .custom-duration.show { display: flex; }
-    .custom-duration input { width: 68px; min-height: 34px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel-2); color: var(--text); padding: 5px 8px; text-align: center; }
-
-    .canvas-shell { position: relative; width: min(100%, 360px); max-height: 62vh; aspect-ratio: 9 / 16; margin: 0 auto; border-radius: 13px; overflow: hidden; background: #05070a; border: 1px solid #334154; touch-action: none; user-select: none; }
-    canvas { display: block; width: 100%; height: 100%; background: #070a0e; }
-    .hint { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); width: max-content; max-width: calc(100% - 22px); padding: 7px 10px; border-radius: 999px; background: rgba(8,12,17,.80); color: #d5dee7; font-size: 10px; text-align: center; pointer-events: none; backdrop-filter: blur(8px); transition: opacity .25s; }
-    .hint.hide { opacity: 0; }
-
-    .selected-panel { margin-top: 9px; padding: 10px; border: 1px solid #2d3a49; border-radius: 12px; background: var(--panel-3); }
-    .selected-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
-    .selected-title { font-size: 13px; font-weight: 750; color: var(--accent-2); }
-    .selected-file { min-width: 0; max-width: 58%; color: var(--muted); font-size: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .mini-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 9px; }
-
-    button, .button-label, select {
-      min-height: 40px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      color: var(--text);
-      background: var(--panel-2);
-      padding: 8px 11px;
-    }
-    .mini-actions button { min-height: 36px; padding: 6px 8px; font-size: 12px; }
-    .primary { background: #35485d; border-color: #4f6680; font-weight: 750; }
-    .secondary { background: #1d2631; }
-    .danger { color: var(--danger); }
-    .full { width: 100%; }
-
-    .control-list { display: grid; gap: 9px; }
-    .control-row { display: grid; grid-template-columns: 72px 1fr 52px; gap: 8px; align-items: center; }
-    .control-row label { color: var(--muted); font-size: 11px; }
-    .value { color: var(--accent-2); font-size: 11px; text-align: right; font-variant-numeric: tabular-nums; }
-    input[type="range"] { width: 100%; accent-color: var(--accent); }
-    .clip-info { display: flex; justify-content: space-between; gap: 10px; margin-top: -2px; color: var(--muted); font-size: 10px; }
-    .clip-info strong { color: var(--accent-2); font-weight: 650; }
-    .mute-line { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-    .mute-line label { display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: 11px; }
-    .mute-line input { width: 17px; height: 17px; accent-color: var(--accent); }
-
-    .settings { margin-top: 9px; display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
-    .field { display: grid; gap: 5px; }
-    .field label { font-size: 10px; color: var(--muted); }
-    select { width: 100%; appearance: none; background-image: linear-gradient(45deg,transparent 50%,#9cadbd 50%),linear-gradient(135deg,#9cadbd 50%,transparent 50%); background-position: calc(100% - 16px) 17px, calc(100% - 11px) 17px; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 28px; }
-
-    .actions { margin-top: 9px; display: grid; grid-template-columns: 1fr 1.35fr; gap: 7px; }
-    .actions button { min-height: 43px; }
-
-    .status { display: none; margin-top: 9px; padding: 9px; border-radius: 11px; background: #10171f; border: 1px solid #2b3948; }
-    .status.show { display: block; }
-    .status-line { display: flex; justify-content: space-between; gap: 10px; font-size: 11px; margin-bottom: 7px; }
-    .progress { height: 7px; border-radius: 99px; background: #26313d; overflow: hidden; }
-    .progress > div { height: 100%; width: 0%; background: linear-gradient(90deg,#607d9b,#9bb0c5); transition: width .15s linear; }
-
-    .result { display: none; margin-top: 9px; gap: 7px; }
-    .result.show { display: grid; }
-    .result video { width: 100%; max-height: 50vh; border-radius: 11px; background: #000; border: 1px solid var(--line); }
-    .result-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
-    .button-label { display: flex; align-items: center; justify-content: center; text-decoration: none; cursor: pointer; }
-
-    .note { margin: 9px 2px 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
-    .hidden-videos { position: fixed; width: 1px; height: 1px; left: -9999px; top: -9999px; overflow: hidden; opacity: .001; pointer-events: none; }
-    #videoPicker { display: none; }
-
-    @media (max-height: 720px) {
-      .canvas-shell { max-height: 55vh; width: min(100%, 320px); }
-      .brand p, .note { display: none; }
-    }
-    @media (max-width: 370px) {
-      .topbar { align-items: start; }
-      .segmented button { min-width: 47px; padding-inline: 8px; }
-      .duration-segment button { min-width: 43px; }
-      .control-row { grid-template-columns: 65px 1fr 48px; }
-    }
+    :root{--bg:#10141b;--panel:#191f29;--panel2:#202836;--line:#344054;--text:#eef3fa;--muted:#9aa8ba;--accent:#6e88a8;--accent2:#8ba3bf;--danger:#c66e78}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{margin:0;background:linear-gradient(180deg,#0e1218,#141a23);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;min-height:100vh}
+    .app{width:min(100%,560px);margin:auto;padding:18px 14px 40px}
+    h1{font-size:20px;margin:2px 0 4px;text-align:center;letter-spacing:.5px}
+    .sub{text-align:center;color:var(--muted);font-size:13px;margin-bottom:14px}
+    .notice{background:#151c26;border:1px solid #2a3545;border-radius:12px;padding:10px 12px;color:#b7c4d4;font-size:12px;line-height:1.6;margin-bottom:12px}
+    .grid{display:grid;gap:10px}
+    .slot{position:relative;height:220px;border:1px dashed #526176;border-radius:15px;background:#151b24;overflow:hidden;display:flex;align-items:center;justify-content:center}
+    .slot video{width:100%;height:100%;object-fit:cover;display:none;background:#000}
+    .empty{display:flex;flex-direction:column;gap:7px;align-items:center;color:#aebccd;font-size:14px;padding:20px;text-align:center}
+    .plus{font-size:30px;line-height:1;color:#859bb7}
+    .slot input{display:none}
+    .slot-tools{position:absolute;right:8px;top:8px;display:none;gap:6px}
+    .slot.has-video .slot-tools{display:flex}
+    .mini{border:1px solid #596a80;background:rgba(17,22,30,.86);color:#e9eef6;border-radius:9px;padding:6px 9px;font-size:12px}
+    .slot-label{position:absolute;left:8px;top:8px;background:rgba(17,22,30,.82);padding:5px 8px;border-radius:8px;font-size:12px;color:#dce5f0}
+    .control{margin-top:10px;background:var(--panel);border:1px solid #2b3545;border-radius:14px;padding:12px}
+    .row{display:flex;align-items:center;gap:9px;margin:8px 0}
+    .row label{width:82px;color:#c6d1df;font-size:13px;flex:none}
+    input[type=range]{width:100%;accent-color:var(--accent2)}
+    .time{width:68px;text-align:right;font-variant-numeric:tabular-nums;color:#dce5f0;font-size:13px}
+    .duration{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:6px}
+    .choice,.btn{border:1px solid #425168;background:var(--panel2);color:#e8eef6;border-radius:11px;padding:10px;font-size:14px;font-weight:600}
+    .choice.active{background:#34445a;border-color:#7892b2}
+    .actions{display:grid;grid-template-columns:1fr 1.4fr;gap:9px;margin-top:12px}
+    .btn.primary{background:#526e90;border-color:#6f89a9}
+    .btn:disabled{opacity:.45}
+    .progress-wrap{display:none;margin-top:12px;background:var(--panel);border:1px solid #2b3545;border-radius:14px;padding:12px}
+    .progress{height:10px;background:#283242;border-radius:99px;overflow:hidden;margin:8px 0}
+    .bar{height:100%;width:0;background:#8098b5;transition:width .2s}
+    .status{font-size:13px;color:#c5d0de;line-height:1.5;word-break:break-word}
+    .result{display:none;margin-top:12px;background:var(--panel);border:1px solid #2b3545;border-radius:14px;padding:12px}
+    .result video{width:100%;max-height:70vh;background:#000;border-radius:10px}
+    .download{display:block;text-align:center;text-decoration:none;margin-top:10px}
+    .switch{margin-left:auto;display:flex;align-items:center;gap:6px;color:#b8c4d3;font-size:12px}
+    .switch input{width:18px;height:18px}
+    .foot{color:#7f8da0;font-size:11px;text-align:center;margin-top:15px;line-height:1.6}
   </style>
 </head>
 <body>
-  <main class="app">
-    <header>
-      <div class="brand">
-        <h1>手機影片拼接</h1>
-        <p>銅鑼燒工作室 · 2 格／3 格直式版</p>
-      </div>
-      <div class="badge">V2.0</div>
-    </header>
+<div class="app">
+  <h1>手機影片拼接</h1>
+  <div class="sub">2 格穩定測試版・上下排列・540 × 960</div>
+  <div class="notice">第一次輸出會下載約 30 MB 的處理引擎。請用 Safari 開啟網站，輸出時保持畫面開啟，不要切換到其他 App。</div>
 
-    <section class="panel">
-      <div class="topbar">
-        <div>
-          <span class="group-label">版型</span>
-          <div class="segmented" aria-label="選擇版型">
-            <button id="layout2" class="active" type="button">2 格</button>
-            <button id="layout3" type="button">3 格</button>
-          </div>
-        </div>
-        <div class="duration-wrap">
-          <span class="group-label">成品長度</span>
-          <div class="segmented duration-segment" aria-label="選擇成品長度">
-            <button class="active" data-duration="10" type="button">10 秒</button>
-            <button data-duration="15" type="button">15 秒</button>
-            <button data-duration="custom" type="button">自訂</button>
-          </div>
-          <div id="customDurationWrap" class="custom-duration">
-            <input id="customDuration" type="number" inputmode="decimal" min="1" max="60" step="1" value="10" /> 秒
-          </div>
-        </div>
-      </div>
+  <div class="grid">
+    <div class="slot" id="slot0">
+      <div class="slot-label">第 1 格</div>
+      <video id="video0" playsinline muted></video>
+      <label class="empty" id="empty0" for="file0"><span class="plus">＋</span><span>點此加入第 1 支影片</span></label>
+      <input id="file0" type="file" accept="video/*" />
+      <div class="slot-tools"><button class="mini" data-change="0">更換</button><button class="mini" data-remove="0">移除</button></div>
+    </div>
+    <div class="control" id="control0">
+      <div class="row"><label>截取起點</label><input id="start0" type="range" min="0" max="0" step="0.1" value="0" disabled><span class="time" id="time0">00:00.0</span></div>
+      <div class="row"><label>聲音</label><input id="vol0" type="range" min="0" max="1.5" step="0.05" value="1"><span class="time" id="volText0">100%</span><span class="switch"><input id="mute0" type="checkbox">靜音</span></div>
+    </div>
 
-      <div id="canvasShell" class="canvas-shell" aria-label="影片拼接預覽區">
-        <canvas id="preview" width="720" height="1280"></canvas>
-        <div id="gestureHint" class="hint">空格直接點選影片；加入後可拖曳、雙指縮放</div>
-      </div>
-      <input id="videoPicker" type="file" accept="video/*" />
+    <div class="slot" id="slot1">
+      <div class="slot-label">第 2 格</div>
+      <video id="video1" playsinline muted></video>
+      <label class="empty" id="empty1" for="file1"><span class="plus">＋</span><span>點此加入第 2 支影片</span></label>
+      <input id="file1" type="file" accept="video/*" />
+      <div class="slot-tools"><button class="mini" data-change="1">更換</button><button class="mini" data-remove="1">移除</button></div>
+    </div>
+    <div class="control" id="control1">
+      <div class="row"><label>截取起點</label><input id="start1" type="range" min="0" max="0" step="0.1" value="0" disabled><span class="time" id="time1">00:00.0</span></div>
+      <div class="row"><label>聲音</label><input id="vol1" type="range" min="0" max="1.5" step="0.05" value="1"><span class="time" id="volText1">100%</span><span class="switch"><input id="mute1" type="checkbox">靜音</span></div>
+    </div>
+  </div>
 
-      <div class="selected-panel">
-        <div class="selected-head">
-          <span id="selectedLabel" class="selected-title">第 1 格設定</span>
-          <span id="fileName" class="selected-file">尚未加入影片</span>
-        </div>
+  <div class="control">
+    <div style="font-size:13px;color:#c6d1df;margin-bottom:6px">成品長度</div>
+    <div class="duration">
+      <button class="choice active" data-duration="10">10 秒</button>
+      <button class="choice" data-duration="15">15 秒</button>
+      <button class="choice" data-duration="5">5 秒測試</button>
+    </div>
+    <div class="actions">
+      <button class="btn" id="previewBtn">預覽片段</button>
+      <button class="btn primary" id="exportBtn">產生拼接影片</button>
+    </div>
+  </div>
 
-        <div class="mini-actions">
-          <button id="replaceSlot" class="secondary" type="button">選擇／更換</button>
-          <button id="resetSlot" class="secondary" type="button">位置置中</button>
-          <button id="removeSlot" class="secondary danger" type="button">移除</button>
-        </div>
+  <div class="progress-wrap" id="progressWrap">
+    <div class="status" id="status">準備中…</div>
+    <div class="progress"><div class="bar" id="bar"></div></div>
+    <div class="status" id="detail"></div>
+  </div>
 
-        <div class="control-list">
-          <div class="control-row">
-            <label for="clipStart">片段起點</label>
-            <input id="clipStart" type="range" min="0" max="0" value="0" step="0.1" disabled />
-            <span id="clipStartValue" class="value">00:00.0</span>
-          </div>
-          <div class="clip-info">
-            <span>選取片段：<strong id="clipRange">尚未加入影片</strong></span>
-            <span id="sourceDuration">原片 00:00</span>
-          </div>
-          <div class="control-row">
-            <label for="zoom">畫面縮放</label>
-            <input id="zoom" type="range" min="1" max="3" value="1" step="0.01" disabled />
-            <span id="zoomValue" class="value">100%</span>
-          </div>
-          <div class="control-row">
-            <label for="volume">影片音量</label>
-            <input id="volume" type="range" min="0" max="1" value="0.8" step="0.01" disabled />
-            <span id="volumeValue" class="value">80%</span>
-          </div>
-          <div class="mute-line">
-            <label><input id="muteSlot" type="checkbox" disabled /> 此格靜音</label>
-            <span>輸出時會混合每格聲音</span>
-          </div>
-        </div>
-      </div>
+  <div class="result" id="result">
+    <div style="font-size:14px;margin-bottom:8px">輸出完成</div>
+    <video id="resultVideo" controls playsinline></video>
+    <a class="btn primary download" id="download" download="手機影片拼接.mp4">下載／儲存影片</a>
+  </div>
+  <div class="foot">影片只在你的手機內處理，不會上傳到伺服器。<br>測試版先確認兩格畫面與兩邊聲音是否正常。</div>
+</div>
 
-      <div class="settings">
-        <div class="field">
-          <label for="quality">輸出畫質</label>
-          <select id="quality">
-            <option value="540">省空間 540×960</option>
-            <option value="720" selected>清晰 720×1280</option>
-            <option value="1080">高畫質 1080×1920</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="fps">流暢度</label>
-          <select id="fps">
-            <option value="24">24 fps（較省空間）</option>
-            <option value="30" selected>30 fps（建議）</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="actions">
-        <button id="playToggle" class="secondary" type="button">播放預覽</button>
-        <button id="exportBtn" class="primary" type="button">輸出 10 秒影片</button>
-      </div>
-
-      <div id="status" class="status" aria-live="polite">
-        <div class="status-line"><span id="statusText">準備中</span><span id="statusPercent">0%</span></div>
-        <div class="progress"><div id="progressBar"></div></div>
-      </div>
-
-      <div id="result" class="result">
-        <video id="resultVideo" controls playsinline></video>
-        <div class="result-actions">
-          <button id="shareBtn" class="primary" type="button">儲存／分享</button>
-          <a id="downloadBtn" class="button-label secondary" download="手機影片拼接.mp4">下載影片</a>
-        </div>
-      </div>
-    </section>
-
-    <p class="note">影片只在手機內處理，不會上傳。輸出 10 秒約需等待 10 秒；請保持網頁開啟。若 iPhone 第一次沒有聲音，先按一次「播放預覽」再輸出。</p>
-
-    <div id="hiddenVideos" class="hidden-videos" aria-hidden="true"></div>
-  </main>
-
+<script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
+<script src="https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/index.js"></script>
 <script>
 (() => {
-  'use strict';
-
-  const $ = id => document.getElementById(id);
-  const canvas = $('preview');
-  const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
-  const shell = $('canvasShell');
-  const hiddenVideos = $('hiddenVideos');
-  const picker = $('videoPicker');
-  const layout2Btn = $('layout2');
-  const layout3Btn = $('layout3');
-  const customDurationWrap = $('customDurationWrap');
-  const customDurationInput = $('customDuration');
-  const selectedLabel = $('selectedLabel');
-  const fileName = $('fileName');
-  const replaceSlotBtn = $('replaceSlot');
-  const resetSlotBtn = $('resetSlot');
-  const removeSlotBtn = $('removeSlot');
-  const clipStart = $('clipStart');
-  const clipStartValue = $('clipStartValue');
-  const clipRange = $('clipRange');
-  const sourceDuration = $('sourceDuration');
-  const zoom = $('zoom');
-  const zoomValue = $('zoomValue');
-  const volume = $('volume');
-  const volumeValue = $('volumeValue');
-  const muteSlot = $('muteSlot');
-  const quality = $('quality');
-  const fps = $('fps');
-  const playToggle = $('playToggle');
-  const exportBtn = $('exportBtn');
-  const gestureHint = $('gestureHint');
-  const status = $('status');
-  const statusText = $('statusText');
-  const statusPercent = $('statusPercent');
-  const progressBar = $('progressBar');
-  const result = $('result');
-  const resultVideo = $('resultVideo');
-  const downloadBtn = $('downloadBtn');
-  const shareBtn = $('shareBtn');
-
-  let layoutCount = 2;
-  let selectedIndex = 0;
+  const files = [null, null];
+  const objectUrls = [null, null];
+  const durations = [0, 0];
   let outputDuration = 10;
-  let customDurationMode = false;
-  let isExporting = false;
-  let isPreviewing = false;
-  let previewRaf = 0;
-  let renderRaf = 0;
-  let exportBlob = null;
-  let exportFile = null;
-  let audioContext = null;
-  let audioDestination = null;
+  let ffmpeg = null;
+  let engineLoaded = false;
+  let outputUrl = null;
+  const $ = id => document.getElementById(id);
+  const fmt = sec => {
+    sec = Math.max(0, Number(sec) || 0);
+    const m = Math.floor(sec / 60);
+    const s = (sec % 60).toFixed(1).padStart(4, '0');
+    return `${String(m).padStart(2,'0')}:${s}`;
+  };
 
-  const slots = Array.from({ length: 3 }, (_, index) => {
-    const video = document.createElement('video');
-    video.playsInline = true;
-    video.preload = 'auto';
-    video.loop = false;
-    video.controls = false;
-    video.disablePictureInPicture = true;
-    hiddenVideos.appendChild(video);
-    return {
-      index,
-      video,
-      file: null,
-      url: null,
-      ready: false,
-      scale: 1,
-      offsetX: 0,
-      offsetY: 0,
-      startTime: 0,
-      volume: 0.8,
-      muted: false,
-      audioSourceNode: null,
-      previewGain: null,
-      exportGain: null,
+  function updateStartLimit(i) {
+    const slider = $(`start${i}`);
+    const max = Math.max(0, durations[i] - outputDuration);
+    slider.max = max.toFixed(1);
+    if (+slider.value > max) slider.value = max.toFixed(1);
+    $(`time${i}`).textContent = fmt(slider.value);
+  }
+
+  function loadFile(i, file) {
+    if (!file) return;
+    files[i] = file;
+    if (objectUrls[i]) URL.revokeObjectURL(objectUrls[i]);
+    objectUrls[i] = URL.createObjectURL(file);
+    const video = $(`video${i}`);
+    video.src = objectUrls[i];
+    video.style.display = 'block';
+    $(`empty${i}`).style.display = 'none';
+    $(`slot${i}`).classList.add('has-video');
+    video.onloadedmetadata = () => {
+      durations[i] = Number.isFinite(video.duration) ? video.duration : 0;
+      $(`start${i}`).disabled = false;
+      updateStartLimit(i);
+      if (durations[i] < outputDuration) alert(`第 ${i+1} 支影片只有 ${durations[i].toFixed(1)} 秒，短於目前成品長度。請改選較短長度或更換影片。`);
     };
+  }
+
+  function removeFile(i) {
+    files[i] = null; durations[i] = 0;
+    if (objectUrls[i]) URL.revokeObjectURL(objectUrls[i]);
+    objectUrls[i] = null;
+    const video = $(`video${i}`);
+    video.pause(); video.removeAttribute('src'); video.load(); video.style.display='none';
+    $(`empty${i}`).style.display='flex'; $(`slot${i}`).classList.remove('has-video');
+    const input = $(`file${i}`); input.value='';
+    const slider=$(`start${i}`); slider.disabled=true; slider.value=0; slider.max=0;
+    $(`time${i}`).textContent='00:00.0';
+  }
+
+  [0,1].forEach(i => {
+    $(`file${i}`).addEventListener('change', e => loadFile(i, e.target.files[0]));
+    $(`start${i}`).addEventListener('input', e => {
+      $(`time${i}`).textContent = fmt(e.target.value);
+      const v=$(`video${i}`); if (files[i]) v.currentTime=+e.target.value;
+    });
+    $(`vol${i}`).addEventListener('input', e => $(`volText${i}`).textContent=`${Math.round(e.target.value*100)}%`);
+  });
+  document.querySelectorAll('[data-change]').forEach(b=>b.addEventListener('click',()=> $(`file${b.dataset.change}`).click()));
+  document.querySelectorAll('[data-remove]').forEach(b=>b.addEventListener('click',()=>removeFile(+b.dataset.remove)));
+  document.querySelectorAll('.choice').forEach(btn=>btn.addEventListener('click',()=>{
+    document.querySelectorAll('.choice').forEach(x=>x.classList.remove('active'));
+    btn.classList.add('active'); outputDuration=+btn.dataset.duration;
+    updateStartLimit(0); updateStartLimit(1);
+  }));
+
+  $('previewBtn').addEventListener('click', async () => {
+    if (!files[0] || !files[1]) return alert('請先加入兩支影片。');
+    const vids=[$('video0'),$('video1')];
+    vids.forEach((v,i)=>{v.currentTime=+$(`start${i}`).value; v.muted=true;});
+    try { await Promise.all(vids.map(v=>v.play())); } catch(e) {}
+    setTimeout(()=>vids.forEach(v=>v.pause()), outputDuration*1000);
   });
 
-  function activeSlots() { return slots.slice(0, layoutCount); }
-  function selectedSlot() { return slots[selectedIndex]; }
-
-  function getRects() {
-    const rects = [];
-    let top = 0;
-    for (let i = 0; i < layoutCount; i++) {
-      const next = Math.round((i + 1) * canvas.height / layoutCount);
-      rects.push({ x: 0, y: top, w: canvas.width, h: next - top });
-      top = next;
-    }
-    return rects;
-  }
-
-  function roundRect(x, y, w, h, r) {
-    const rr = Math.min(r, w / 2, h / 2);
-    ctx.beginPath();
-    ctx.moveTo(x + rr, y);
-    ctx.arcTo(x + w, y, x + w, y + h, rr);
-    ctx.arcTo(x + w, y + h, x, y + h, rr);
-    ctx.arcTo(x, y + h, x, y, rr);
-    ctx.arcTo(x, y, x + w, y, rr);
-    ctx.closePath();
-  }
-
-  function drawEmpty(rect, index) {
-    const grad = ctx.createLinearGradient(0, rect.y, 0, rect.y + rect.h);
-    grad.addColorStop(0, '#151d27');
-    grad.addColorStop(1, '#0e141c');
-    ctx.fillStyle = grad;
-    ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
-
-    ctx.fillStyle = '#8b9daf';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.font = `700 ${Math.round(canvas.width * 0.034)}px -apple-system, sans-serif`;
-    ctx.fillText('＋ 點此加入影片', rect.x + rect.w / 2, rect.y + rect.h / 2 - canvas.width * 0.015);
-    ctx.fillStyle = '#607184';
-    ctx.font = `500 ${Math.round(canvas.width * 0.021)}px -apple-system, sans-serif`;
-    ctx.fillText(`第 ${index + 1} 格`, rect.x + rect.w / 2, rect.y + rect.h / 2 + canvas.width * 0.03);
-  }
-
-  function drawVideoCover(slot, rect) {
-    const v = slot.video;
-    if (!slot.ready || v.readyState < 2 || !v.videoWidth || !v.videoHeight) {
-      drawEmpty(rect, slot.index);
-      return;
-    }
-
-    const baseScale = Math.max(rect.w / v.videoWidth, rect.h / v.videoHeight);
-    const scale = baseScale * slot.scale;
-    const dw = v.videoWidth * scale;
-    const dh = v.videoHeight * scale;
-    const maxX = Math.max(0, (dw - rect.w) / 2);
-    const maxY = Math.max(0, (dh - rect.h) / 2);
-    const wantedX = slot.offsetX * rect.w;
-    const wantedY = slot.offsetY * rect.h;
-    const x = Math.max(-maxX, Math.min(maxX, wantedX));
-    const y = Math.max(-maxY, Math.min(maxY, wantedY));
-    slot.offsetX = rect.w ? x / rect.w : 0;
-    slot.offsetY = rect.h ? y / rect.h : 0;
-    const dx = rect.x + (rect.w - dw) / 2 + x;
-    const dy = rect.y + (rect.h - dh) / 2 + y;
-
-    ctx.save();
-    ctx.beginPath();
-    ctx.rect(rect.x, rect.y, rect.w, rect.h);
-    ctx.clip();
-    try { ctx.drawImage(v, dx, dy, dw, dh); }
-    catch (_) { drawEmpty(rect, slot.index); }
-    ctx.restore();
-  }
-
-  function drawFrame() {
-    ctx.fillStyle = '#05070a';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    const rects = getRects();
-
-    for (let i = 0; i < layoutCount; i++) {
-      drawVideoCover(slots[i], rects[i]);
-      if (i > 0) {
-        ctx.fillStyle = 'rgba(235,242,248,.92)';
-        ctx.fillRect(0, rects[i].y - 1, canvas.width, 2);
-      }
-    }
-
-    if (!isExporting) {
-      const r = rects[selectedIndex];
-      ctx.save();
-      ctx.strokeStyle = '#a8bed5';
-      ctx.lineWidth = Math.max(4, canvas.width / 160);
-      ctx.strokeRect(r.x + 3, r.y + 3, r.w - 6, r.h - 6);
-      ctx.fillStyle = 'rgba(12,18,25,.80)';
-      roundRect(12, r.y + 12, 82, 38, 12);
-      ctx.fill();
-      ctx.fillStyle = '#e8eff6';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.font = `700 ${Math.round(canvas.width * 0.023)}px -apple-system, sans-serif`;
-      ctx.fillText(`第 ${selectedIndex + 1} 格`, 53, r.y + 31);
-      ctx.restore();
-    }
-  }
-
-  function renderLoop() {
-    drawFrame();
-    renderRaf = requestAnimationFrame(renderLoop);
-  }
-
-  function setLayout(count) {
-    if (isExporting) return;
-    stopPreview(false);
-    layoutCount = count;
-    layout2Btn.classList.toggle('active', count === 2);
-    layout3Btn.classList.toggle('active', count === 3);
-    if (selectedIndex >= count) selectedIndex = count - 1;
-    updateSelectedUI();
-    drawFrame();
-  }
-
-  function setDuration(seconds, custom = false) {
-    if (isExporting) return;
-    stopPreview(false);
-    customDurationMode = custom;
-    outputDuration = Math.max(1, Math.min(60, Number(seconds) || 10));
-    document.querySelectorAll('[data-duration]').forEach(btn => {
-      btn.classList.toggle('active', custom ? btn.dataset.duration === 'custom' : Number(btn.dataset.duration) === outputDuration);
+  async function loadEngine() {
+    if (engineLoaded) return;
+    $('status').textContent='第一次使用，正在下載影片處理引擎…';
+    $('detail').textContent='約 30 MB，請保持網路連線。';
+    const { FFmpeg } = FFmpegWASM;
+    const { toBlobURL } = FFmpegUtil;
+    ffmpeg = new FFmpeg();
+    ffmpeg.on('log', ({message}) => { if (message) $('detail').textContent=message.slice(-180); });
+    ffmpeg.on('progress', ({progress}) => { $('bar').style.width=`${Math.max(0,Math.min(100,progress*100)).toFixed(0)}%`; });
+    const base='https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/umd';
+    await ffmpeg.load({
+      coreURL: await toBlobURL(`${base}/ffmpeg-core.js`, 'text/javascript'),
+      wasmURL: await toBlobURL(`${base}/ffmpeg-core.wasm`, 'application/wasm')
     });
-    customDurationWrap.classList.toggle('show', custom);
-    activeSlots().forEach(slot => clampStartTime(slot));
-    exportBtn.textContent = `輸出 ${formatSimple(outputDuration)}影片`;
-    updateSelectedUI();
+    engineLoaded=true;
   }
 
-  function clampStartTime(slot) {
-    if (!slot.ready || !Number.isFinite(slot.video.duration)) {
-      slot.startTime = 0;
-      return;
-    }
-    const max = Math.max(0, slot.video.duration - outputDuration);
-    slot.startTime = Math.max(0, Math.min(max, slot.startTime));
-  }
-
-  function formatSimple(seconds) {
-    const n = Number(seconds);
-    return Number.isInteger(n) ? `${n} 秒` : `${n.toFixed(1)} 秒`;
-  }
-
-  function formatTime(seconds, decimals = true) {
-    const safe = Math.max(0, Number(seconds) || 0);
-    const m = Math.floor(safe / 60);
-    const s = safe - m * 60;
-    const body = decimals ? s.toFixed(1).padStart(4, '0') : Math.floor(s).toString().padStart(2, '0');
-    return `${String(m).padStart(2, '0')}:${body}`;
-  }
-
-  function shorten(text, max) {
-    if (!text || text.length <= max) return text || '';
-    const dot = text.lastIndexOf('.');
-    const ext = dot >= 0 ? text.slice(dot) : '';
-    return text.slice(0, Math.max(6, max - ext.length - 1)) + '…' + ext;
-  }
-
-  function updateSelectedUI() {
-    const slot = selectedSlot();
-    const ready = slot.ready;
-    selectedLabel.textContent = `第 ${selectedIndex + 1} 格設定`;
-    fileName.textContent = ready && slot.file ? shorten(slot.file.name, 28) : '尚未加入影片';
-    replaceSlotBtn.textContent = ready ? '更換影片' : '選擇影片';
-    resetSlotBtn.disabled = !ready || isExporting;
-    removeSlotBtn.disabled = !ready || isExporting;
-    clipStart.disabled = !ready || isExporting;
-    zoom.disabled = !ready || isExporting;
-    volume.disabled = !ready || isExporting;
-    muteSlot.disabled = !ready || isExporting;
-
-    if (!ready) {
-      clipStart.min = '0';
-      clipStart.max = '0';
-      clipStart.value = '0';
-      clipStartValue.textContent = '00:00.0';
-      clipRange.textContent = '尚未加入影片';
-      sourceDuration.textContent = '原片 00:00';
-      zoom.value = '1';
-      zoomValue.textContent = '100%';
-      volume.value = '0.8';
-      volumeValue.textContent = '80%';
-      muteSlot.checked = false;
-      return;
-    }
-
-    clampStartTime(slot);
-    const duration = Number(slot.video.duration) || 0;
-    const maxStart = Math.max(0, duration - outputDuration);
-    clipStart.max = String(maxStart);
-    clipStart.value = String(slot.startTime);
-    clipStartValue.textContent = formatTime(slot.startTime);
-    clipRange.textContent = `${formatTime(slot.startTime)} ～ ${formatTime(slot.startTime + outputDuration)}`;
-    sourceDuration.textContent = `原片 ${formatTime(duration, false)}`;
-    zoom.value = String(slot.scale);
-    zoomValue.textContent = `${Math.round(slot.scale * 100)}%`;
-    volume.value = String(slot.volume);
-    volumeValue.textContent = `${Math.round(slot.volume * 100)}%`;
-    muteSlot.checked = slot.muted;
-  }
-
-  function openPickerFor(index) {
-    if (isExporting) return;
-    selectedIndex = Math.max(0, Math.min(layoutCount - 1, index));
-    updateSelectedUI();
-    picker.value = '';
-    picker.click();
-  }
-
-  async function waitForMedia(video, events, timeout = 8000) {
-    if (events.includes('loadeddata') && video.readyState >= 2) return;
-    await new Promise((resolve, reject) => {
-      let done = false;
-      const clean = () => {
-        events.forEach(e => video.removeEventListener(e, onReady));
-        video.removeEventListener('error', onError);
-        clearTimeout(timer);
-      };
-      const finish = (fn, value) => {
-        if (done) return;
-        done = true;
-        clean();
-        fn(value);
-      };
-      const onReady = () => finish(resolve);
-      const onError = () => finish(reject, new Error('影片讀取失敗'));
-      const timer = setTimeout(() => finish(reject, new Error('影片讀取逾時')), timeout);
-      events.forEach(e => video.addEventListener(e, onReady, { once: true }));
-      video.addEventListener('error', onError, { once: true });
-    });
-  }
-
-  async function loadVideo(file) {
-    if (!file || !file.type.startsWith('video/')) {
-      alert('請選擇影片檔案。');
-      return;
-    }
-    stopPreview(false);
-    const slot = selectedSlot();
-    if (slot.url) URL.revokeObjectURL(slot.url);
-    slot.video.pause();
-    slot.file = file;
-    slot.url = URL.createObjectURL(file);
-    slot.ready = false;
-    slot.scale = 1;
-    slot.offsetX = 0;
-    slot.offsetY = 0;
-    slot.startTime = 0;
-    slot.video.src = slot.url;
-    slot.video.load();
-
-    status.classList.add('show');
-    setStatus(`正在讀取第 ${selectedIndex + 1} 格影片…`, 0);
-
+  $('exportBtn').addEventListener('click', async () => {
+    if (!files[0] || !files[1]) return alert('請先加入兩支影片。');
+    if (durations.some(d=>d < outputDuration)) return alert('其中一支影片短於成品長度，請選擇較短的成品長度或更換影片。');
+    const btn=$('exportBtn'); btn.disabled=true; $('previewBtn').disabled=true;
+    $('progressWrap').style.display='block'; $('result').style.display='none'; $('bar').style.width='0%';
     try {
-      await waitForMedia(slot.video, ['loadeddata', 'canplay']);
-      slot.ready = true;
-      await ensureAudioNode(slot).catch(() => {});
-      clampStartTime(slot);
-      await seekSlot(slot, slot.startTime).catch(() => {});
-      setStatus('影片已加入', 100);
-      setTimeout(() => { if (!isExporting) status.classList.remove('show'); }, 800);
-      gestureHint.classList.remove('hide');
-      setTimeout(() => gestureHint.classList.add('hide'), 2600);
-    } catch (err) {
+      await loadEngine();
+      const { fetchFile } = FFmpegUtil;
+      $('status').textContent='正在讀取兩支影片…';
+      const ext0=(files[0].name.split('.').pop()||'mp4').toLowerCase();
+      const ext1=(files[1].name.split('.').pop()||'mp4').toLowerCase();
+      const in0=`input0.${ext0}`, in1=`input1.${ext1}`;
+      await ffmpeg.writeFile(in0, await fetchFile(files[0]));
+      await ffmpeg.writeFile(in1, await fetchFile(files[1]));
+      const s0=(+$('start0').value).toFixed(3), s1=(+$('start1').value).toFixed(3);
+      const v0=$('mute0').checked?0:+$('vol0').value;
+      const v1=$('mute1').checked?0:+$('vol1').value;
+      const d=outputDuration.toFixed(3);
+      const filter=[
+        `[0:v]trim=start=${s0}:duration=${d},setpts=PTS-STARTPTS,scale=540:480:force_original_aspect_ratio=increase,crop=540:480,fps=24[v0]`,
+        `[1:v]trim=start=${s1}:duration=${d},setpts=PTS-STARTPTS,scale=540:480:force_original_aspect_ratio=increase,crop=540:480,fps=24[v1]`,
+        `[v0][v1]vstack=inputs=2[v]`,
+        `[0:a]atrim=start=${s0}:duration=${d},asetpts=PTS-STARTPTS,volume=${v0}[a0]`,
+        `[1:a]atrim=start=${s1}:duration=${d},asetpts=PTS-STARTPTS,volume=${v1}[a1]`,
+        `[a0][a1]amix=inputs=2:duration=longest:dropout_transition=0:normalize=0,alimiter=limit=0.95[a]`
+      ].join(';');
+      $('status').textContent='正在合成兩格畫面與兩邊聲音…';
+      $('detail').textContent='手機處理可能需要 1～5 分鐘，請不要離開此頁。';
+      await ffmpeg.exec(['-i',in0,'-i',in1,'-filter_complex',filter,'-map','[v]','-map','[a]','-t',d,'-c:v','libx264','-preset','ultrafast','-crf','28','-pix_fmt','yuv420p','-c:a','aac','-b:a','128k','-movflags','+faststart','output.mp4']);
+      const data=await ffmpeg.readFile('output.mp4');
+      if (outputUrl) URL.revokeObjectURL(outputUrl);
+      outputUrl=URL.createObjectURL(new Blob([data.buffer],{type:'video/mp4'}));
+      $('resultVideo').src=outputUrl; $('download').href=outputUrl;
+      $('result').style.display='block'; $('status').textContent='輸出完成'; $('detail').textContent='請先播放檢查兩格是否都會動、兩邊聲音是否都有。'; $('bar').style.width='100%';
+      $('result').scrollIntoView({behavior:'smooth'});
+      try{await ffmpeg.deleteFile(in0);await ffmpeg.deleteFile(in1);await ffmpeg.deleteFile('output.mp4');}catch(e){}
+    } catch(err) {
       console.error(err);
-      slot.ready = false;
-      alert('這支影片無法讀取，建議改用 MP4 或較短的影片。');
-      status.classList.remove('show');
-    }
-    updateSelectedUI();
-    drawFrame();
-  }
-
-  function resetSlot() {
-    const slot = selectedSlot();
-    slot.scale = 1;
-    slot.offsetX = 0;
-    slot.offsetY = 0;
-    updateSelectedUI();
-    drawFrame();
-  }
-
-  function removeSlot() {
-    if (isExporting) return;
-    stopPreview(false);
-    const slot = selectedSlot();
-    slot.video.pause();
-    slot.video.removeAttribute('src');
-    slot.video.load();
-    if (slot.url) URL.revokeObjectURL(slot.url);
-    slot.url = null;
-    slot.file = null;
-    slot.ready = false;
-    slot.scale = 1;
-    slot.offsetX = 0;
-    slot.offsetY = 0;
-    slot.startTime = 0;
-    updateSelectedUI();
-    drawFrame();
-  }
-
-  function getSlotIndex(clientY) {
-    const bounds = canvas.getBoundingClientRect();
-    const y = Math.max(0, Math.min(bounds.height - 0.001, clientY - bounds.top));
-    return Math.floor(y / (bounds.height / layoutCount));
-  }
-
-  const pointers = new Map();
-  let gesture = null;
-
-  shell.addEventListener('pointerdown', e => {
-    if (isExporting) return;
-    shell.setPointerCapture?.(e.pointerId);
-    const index = getSlotIndex(e.clientY);
-    selectedIndex = index;
-    updateSelectedUI();
-    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    const slot = selectedSlot();
-
-    if (pointers.size === 1) {
-      gesture = {
-        type: 'drag',
-        pointerId: e.pointerId,
-        startX: e.clientX,
-        startY: e.clientY,
-        moved: false,
-        offsetX: slot.offsetX,
-        offsetY: slot.offsetY,
-        slotIndex: index,
-      };
-    } else if (pointers.size === 2) {
-      const pts = [...pointers.values()];
-      gesture = {
-        type: 'pinch',
-        distance: Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y),
-        scale: slot.scale,
-        slotIndex: selectedIndex,
-      };
-    }
-    gestureHint.classList.add('hide');
-    e.preventDefault();
+      $('status').textContent='輸出失敗';
+      $('detail').textContent=(err&&err.message?err.message:String(err))+'。若是 iPhone 原始 HEVC 影片，請先用較短、相容性較高的 MP4 測試。';
+      alert('輸出失敗，請查看下方錯誤訊息。');
+    } finally { btn.disabled=false; $('previewBtn').disabled=false; }
   });
-
-  shell.addEventListener('pointermove', e => {
-    if (!pointers.has(e.pointerId) || isExporting) return;
-    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    const slot = selectedSlot();
-
-    if (pointers.size >= 2 && gesture?.type === 'pinch') {
-      const pts = [...pointers.values()].slice(0, 2);
-      const distance = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
-      slot.scale = Math.max(1, Math.min(3, gesture.scale * distance / Math.max(1, gesture.distance)));
-      zoom.value = String(slot.scale);
-      zoomValue.textContent = `${Math.round(slot.scale * 100)}%`;
-    } else if (gesture?.type === 'drag' && gesture.pointerId === e.pointerId && slot.ready) {
-      const dx = e.clientX - gesture.startX;
-      const dy = e.clientY - gesture.startY;
-      if (Math.hypot(dx, dy) > 5) gesture.moved = true;
-      const bounds = canvas.getBoundingClientRect();
-      const slotHeight = bounds.height / layoutCount;
-      slot.offsetX = gesture.offsetX + dx / bounds.width;
-      slot.offsetY = gesture.offsetY + dy / slotHeight;
-    }
-    drawFrame();
-    e.preventDefault();
-  });
-
-  function endPointer(e) {
-    const previousGesture = gesture;
-    pointers.delete(e.pointerId);
-    if (pointers.size === 0) {
-      gesture = null;
-      const index = previousGesture?.slotIndex ?? selectedIndex;
-      const slot = slots[index];
-      if (previousGesture?.type === 'drag' && !previousGesture.moved && !slot.ready) {
-        setTimeout(() => openPickerFor(index), 0);
-      }
-    } else if (pointers.size === 1) {
-      const [remaining] = [...pointers.entries()];
-      const slot = selectedSlot();
-      gesture = {
-        type: 'drag',
-        pointerId: remaining[0],
-        startX: remaining[1].x,
-        startY: remaining[1].y,
-        moved: true,
-        offsetX: slot.offsetX,
-        offsetY: slot.offsetY,
-        slotIndex: selectedIndex,
-      };
-    }
-  }
-  shell.addEventListener('pointerup', endPointer);
-  shell.addEventListener('pointercancel', endPointer);
-
-  async function ensureAudioContext() {
-    if (!audioContext) {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (!AudioCtx) throw new Error('瀏覽器不支援音訊處理');
-      audioContext = new AudioCtx();
-      audioDestination = audioContext.createMediaStreamDestination();
-    }
-    return audioContext;
-  }
-
-  async function resumeAudio() {
-    await ensureAudioContext();
-    if (audioContext.state === 'suspended') await audioContext.resume();
-  }
-
-  async function ensureAudioNode(slot) {
-    await ensureAudioContext();
-    if (slot.audioSourceNode) return;
-    const source = audioContext.createMediaElementSource(slot.video);
-    const previewGain = audioContext.createGain();
-    const exportGain = audioContext.createGain();
-    previewGain.gain.value = 0;
-    exportGain.gain.value = 0;
-    source.connect(previewGain).connect(audioContext.destination);
-    source.connect(exportGain).connect(audioDestination);
-    slot.audioSourceNode = source;
-    slot.previewGain = previewGain;
-    slot.exportGain = exportGain;
-  }
-
-  function mixScale() {
-    const audible = activeSlots().filter(s => s.ready && !s.muted && s.volume > 0).length;
-    return audible > 1 ? 1 / Math.sqrt(audible) : 1;
-  }
-
-  function applyPreviewAudio() {
-    const scale = mixScale();
-    slots.forEach(slot => {
-      if (slot.previewGain) slot.previewGain.gain.value = slot.ready && !slot.muted ? slot.volume * scale : 0;
-      if (slot.exportGain) slot.exportGain.gain.value = 0;
-    });
-  }
-
-  function applyExportAudio() {
-    const scale = mixScale();
-    slots.forEach(slot => {
-      if (slot.previewGain) slot.previewGain.gain.value = 0;
-      if (slot.exportGain) slot.exportGain.gain.value = slot.ready && !slot.muted ? slot.volume * scale : 0;
-    });
-  }
-
-  function silenceAudio() {
-    slots.forEach(slot => {
-      if (slot.previewGain) slot.previewGain.gain.value = 0;
-      if (slot.exportGain) slot.exportGain.gain.value = 0;
-    });
-  }
-
-  function validateClips(showAlert = true) {
-    const actives = activeSlots();
-    if (!actives.every(s => s.ready)) {
-      if (showAlert) alert(`請先加入 ${layoutCount} 支影片。`);
-      return false;
-    }
-    const tooShort = actives.find(s => !Number.isFinite(s.video.duration) || s.video.duration + 0.03 < outputDuration);
-    if (tooShort) {
-      if (showAlert) alert(`第 ${tooShort.index + 1} 格影片只有 ${formatSimple(tooShort.video.duration || 0)}，不足輸出 ${formatSimple(outputDuration)}。\n請換較長的影片或縮短成品長度。`);
-      return false;
-    }
-    actives.forEach(clampStartTime);
-    return true;
-  }
-
-  async function seekSlot(slot, time) {
-    const v = slot.video;
-    if (!slot.ready) return;
-    const target = Math.max(0, Math.min(Number(v.duration) || time, time));
-    if (Math.abs(v.currentTime - target) < 0.025 && v.readyState >= 2) return;
-    await new Promise(resolve => {
-      let finished = false;
-      const done = () => {
-        if (finished) return;
-        finished = true;
-        v.removeEventListener('seeked', done);
-        clearTimeout(timer);
-        resolve();
-      };
-      const timer = setTimeout(done, 1800);
-      v.addEventListener('seeked', done, { once: true });
-      try { v.currentTime = target; } catch (_) { done(); }
-    });
-  }
-
-  async function seekAllToStarts() {
-    await Promise.all(activeSlots().map(slot => seekSlot(slot, slot.startTime)));
-    drawFrame();
-  }
-
-  function pauseAll() {
-    activeSlots().forEach(slot => slot.video.pause());
-  }
-
-  async function playAllVideos() {
-    const results = await Promise.allSettled(activeSlots().map(slot => slot.video.play()));
-    const rejected = results.findIndex(r => r.status === 'rejected');
-    if (rejected >= 0) throw new Error(`第 ${rejected + 1} 格無法開始播放`);
-  }
-
-  async function waitForAdvance(timeout = 2200) {
-    const baselines = activeSlots().map(slot => slot.video.currentTime);
-    const start = performance.now();
-    await new Promise((resolve, reject) => {
-      const tick = () => {
-        const stalled = activeSlots().find((slot, i) => slot.video.currentTime < baselines[i] + 0.045);
-        if (!stalled) return resolve();
-        if (performance.now() - start > timeout) return reject(new Error(`第 ${stalled.index + 1} 格影片沒有開始播放`));
-        requestAnimationFrame(tick);
-      };
-      tick();
-    });
-  }
-
-  function primePlaybackImmediately() {
-    try { resumeAudio().catch(() => {}); } catch (_) {}
-    const promises = activeSlots().filter(slot => slot.ready).map(slot => {
-      try { return slot.video.play(); }
-      catch (err) { return Promise.reject(err); }
-    });
-    return Promise.allSettled(promises);
-  }
-
-  async function startPreview() {
-    if (isExporting || isPreviewing) return;
-    const primePromise = primePlaybackImmediately();
-    if (!validateClips(true)) { pauseAll(); return; }
-    isPreviewing = true;
-    playToggle.textContent = '暫停預覽';
-    try {
-      await primePromise;
-      pauseAll();
-      await seekAllToStarts();
-      await Promise.all(activeSlots().map(slot => ensureAudioNode(slot)));
-      await resumeAudio();
-      applyPreviewAudio();
-      await playAllVideos();
-      const started = performance.now();
-      const tick = () => {
-        if (!isPreviewing) return;
-        const elapsed = (performance.now() - started) / 1000;
-        if (elapsed >= outputDuration) {
-          stopPreview(true);
-          return;
-        }
-        previewRaf = requestAnimationFrame(tick);
-      };
-      tick();
-    } catch (err) {
-      console.error(err);
-      stopPreview(false);
-      alert(`${err.message || '預覽失敗'}。\n請再按一次播放預覽。`);
-    }
-  }
-
-  async function stopPreview(reset = false) {
-    isPreviewing = false;
-    cancelAnimationFrame(previewRaf);
-    pauseAll();
-    silenceAudio();
-    playToggle.textContent = '播放預覽';
-    if (reset) await seekAllToStarts().catch(() => {});
-  }
-
-  function getOutputMime() {
-    const candidates = [
-      'video/mp4;codecs="avc1.42E01E,mp4a.40.2"',
-      'video/mp4;codecs="avc1,mp4a.40.2"',
-      'video/mp4',
-      'video/webm;codecs=vp9,opus',
-      'video/webm;codecs=vp8,opus',
-      'video/webm'
-    ];
-    return candidates.find(type => window.MediaRecorder && MediaRecorder.isTypeSupported(type)) || '';
-  }
-
-  async function exportVideo() {
-    if (isExporting) return;
-    const primePromise = primePlaybackImmediately();
-    if (!validateClips(true)) { pauseAll(); return; }
-    if (!window.MediaRecorder || !canvas.captureStream) {
-      alert('目前瀏覽器不支援影片輸出，請改用最新版 Safari 或 Chrome。');
-      return;
-    }
-
-    isExporting = true;
-    await stopPreview(false);
-    setUiDisabled(true);
-    result.classList.remove('show');
-    status.classList.add('show');
-    setStatus('準備同步影片…', 0);
-
-    const oldW = canvas.width;
-    const oldH = canvas.height;
-    const w = Number(quality.value);
-    const frameRate = Number(fps.value);
-    canvas.width = w;
-    canvas.height = Math.round(w * 16 / 9);
-    drawFrame();
-
-    let recorder = null;
-    let chunks = [];
-    let stoppedResolve;
-    const stopped = new Promise(resolve => { stoppedResolve = resolve; });
-
-    try {
-      await primePromise;
-      pauseAll();
-      await Promise.all(activeSlots().map(slot => ensureAudioNode(slot)));
-      await resumeAudio();
-
-      // 先跑一次短暫同步檢查，再回到各自選定的起點。
-      await seekAllToStarts();
-      silenceAudio();
-      await playAllVideos();
-      await waitForAdvance();
-      pauseAll();
-      await seekAllToStarts();
-
-      const stream = canvas.captureStream(frameRate);
-      applyExportAudio();
-      const audioTrack = audioDestination?.stream.getAudioTracks?.()[0];
-      if (audioTrack) stream.addTrack(audioTrack);
-
-      const mimeType = getOutputMime();
-      const options = {
-        videoBitsPerSecond: w >= 1080 ? 9000000 : (w >= 720 ? 5200000 : 2900000),
-        audioBitsPerSecond: 160000,
-      };
-      if (mimeType) options.mimeType = mimeType;
-
-      recorder = new MediaRecorder(stream, options);
-      recorder.ondataavailable = event => { if (event.data?.size) chunks.push(event.data); };
-      recorder.onerror = event => console.error('Recorder error:', event);
-      recorder.onstop = stoppedResolve;
-
-      setStatus('開始輸出…', 1);
-      recorder.start(500);
-      await playAllVideos();
-      const started = performance.now();
-
-      await new Promise((resolve, reject) => {
-        let lastTimes = activeSlots().map(slot => slot.video.currentTime);
-        let lastMoveAt = performance.now();
-        const tick = () => {
-          const now = performance.now();
-          const elapsed = (now - started) / 1000;
-          const currentTimes = activeSlots().map(slot => slot.video.currentTime);
-          const moved = currentTimes.every((time, i) => time > lastTimes[i] + 0.001 || elapsed >= outputDuration - 0.15);
-          if (moved) {
-            lastTimes = currentTimes;
-            lastMoveAt = now;
-          }
-          if (now - lastMoveAt > 1800) {
-            const stuck = activeSlots().find((slot, i) => currentTimes[i] <= lastTimes[i] + 0.001);
-            return reject(new Error(`第 ${stuck?.index + 1 || '?'} 格影片播放中斷`));
-          }
-          const pct = Math.min(99, elapsed / outputDuration * 100);
-          setStatus(`正在輸出（${Math.min(outputDuration, elapsed).toFixed(1)} / ${outputDuration.toFixed(1)} 秒）`, pct);
-          if (elapsed >= outputDuration) return resolve();
-          requestAnimationFrame(tick);
-        };
-        tick();
-      });
-
-      pauseAll();
-      recorder.stop();
-      await stopped;
-      setStatus('正在整理影片檔…', 99);
-
-      const actualType = recorder.mimeType || mimeType || chunks[0]?.type || 'video/webm';
-      exportBlob = new Blob(chunks, { type: actualType });
-      if (!exportBlob.size) throw new Error('沒有產生影片資料');
-      const ext = actualType.includes('mp4') ? 'mp4' : 'webm';
-      const filename = `手機影片拼接_${layoutCount}格_${formatSimple(outputDuration).replace(/\s/g, '')}_${dateStamp()}.${ext}`;
-      exportFile = new File([exportBlob], filename, { type: actualType });
-      const outputUrl = URL.createObjectURL(exportBlob);
-      if (resultVideo.src) URL.revokeObjectURL(resultVideo.src);
-      resultVideo.src = outputUrl;
-      downloadBtn.href = outputUrl;
-      downloadBtn.download = filename;
-      downloadBtn.textContent = ext === 'mp4' ? '下載 MP4' : '下載 WebM';
-      result.classList.add('show');
-      setStatus('輸出完成', 100);
-      setTimeout(() => result.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
-    } catch (err) {
-      console.error(err);
-      try {
-        if (recorder?.state === 'recording') recorder.stop();
-      } catch (_) {}
-      alert(`輸出失敗：${err?.message || '未知錯誤'}\n\n請先按一次「播放預覽」，確認每格都會動，再重新輸出。`);
-      status.classList.remove('show');
-    } finally {
-      pauseAll();
-      silenceAudio();
-      canvas.width = oldW;
-      canvas.height = oldH;
-      isExporting = false;
-      setUiDisabled(false);
-      updateSelectedUI();
-      drawFrame();
-    }
-  }
-
-  function setUiDisabled(disabled) {
-    layout2Btn.disabled = disabled;
-    layout3Btn.disabled = disabled;
-    document.querySelectorAll('[data-duration]').forEach(btn => btn.disabled = disabled);
-    customDurationInput.disabled = disabled;
-    picker.disabled = disabled;
-    replaceSlotBtn.disabled = disabled;
-    resetSlotBtn.disabled = disabled || !selectedSlot().ready;
-    removeSlotBtn.disabled = disabled || !selectedSlot().ready;
-    clipStart.disabled = disabled || !selectedSlot().ready;
-    zoom.disabled = disabled || !selectedSlot().ready;
-    volume.disabled = disabled || !selectedSlot().ready;
-    muteSlot.disabled = disabled || !selectedSlot().ready;
-    quality.disabled = disabled;
-    fps.disabled = disabled;
-    playToggle.disabled = disabled;
-    exportBtn.disabled = disabled;
-  }
-
-  function setStatus(text, percent) {
-    statusText.textContent = text;
-    const p = Math.max(0, Math.min(100, Number(percent) || 0));
-    statusPercent.textContent = `${Math.round(p)}%`;
-    progressBar.style.width = `${p}%`;
-  }
-
-  function dateStamp() {
-    const d = new Date();
-    const p = n => String(n).padStart(2, '0');
-    return `${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}`;
-  }
-
-  async function shareResult() {
-    if (!exportBlob || !exportFile) return;
-    try {
-      if (navigator.canShare?.({ files: [exportFile] })) {
-        await navigator.share({ files: [exportFile], title: '手機影片拼接' });
-      } else {
-        downloadBtn.click();
-      }
-    } catch (err) {
-      if (err?.name !== 'AbortError') downloadBtn.click();
-    }
-  }
-
-  layout2Btn.addEventListener('click', () => setLayout(2));
-  layout3Btn.addEventListener('click', () => setLayout(3));
-  document.querySelectorAll('[data-duration]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (btn.dataset.duration === 'custom') setDuration(customDurationInput.value, true);
-      else setDuration(Number(btn.dataset.duration), false);
-    });
-  });
-  customDurationInput.addEventListener('change', () => setDuration(customDurationInput.value, true));
-  customDurationInput.addEventListener('input', () => {
-    const value = Math.max(1, Math.min(60, Number(customDurationInput.value) || 1));
-    outputDuration = value;
-    activeSlots().forEach(clampStartTime);
-    exportBtn.textContent = `輸出 ${formatSimple(outputDuration)}影片`;
-    updateSelectedUI();
-  });
-
-  picker.addEventListener('change', () => loadVideo(picker.files?.[0]));
-  replaceSlotBtn.addEventListener('click', () => openPickerFor(selectedIndex));
-  resetSlotBtn.addEventListener('click', resetSlot);
-  removeSlotBtn.addEventListener('click', removeSlot);
-
-  clipStart.addEventListener('input', async () => {
-    stopPreview(false);
-    const slot = selectedSlot();
-    slot.startTime = Number(clipStart.value);
-    clipStartValue.textContent = formatTime(slot.startTime);
-    clipRange.textContent = `${formatTime(slot.startTime)} ～ ${formatTime(slot.startTime + outputDuration)}`;
-    await seekSlot(slot, slot.startTime).catch(() => {});
-    drawFrame();
-  });
-  zoom.addEventListener('input', () => {
-    const slot = selectedSlot();
-    slot.scale = Number(zoom.value);
-    zoomValue.textContent = `${Math.round(slot.scale * 100)}%`;
-    drawFrame();
-  });
-  volume.addEventListener('input', () => {
-    const slot = selectedSlot();
-    slot.volume = Number(volume.value);
-    volumeValue.textContent = `${Math.round(slot.volume * 100)}%`;
-    if (isPreviewing) applyPreviewAudio();
-  });
-  muteSlot.addEventListener('change', () => {
-    selectedSlot().muted = muteSlot.checked;
-    if (isPreviewing) applyPreviewAudio();
-  });
-
-  playToggle.addEventListener('click', () => isPreviewing ? stopPreview(false) : startPreview());
-  exportBtn.addEventListener('click', exportVideo);
-  shareBtn.addEventListener('click', shareResult);
-
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden && isPreviewing) stopPreview(false);
-  });
-  window.addEventListener('beforeunload', () => {
-    cancelAnimationFrame(renderRaf);
-    cancelAnimationFrame(previewRaf);
-    slots.forEach(slot => { if (slot.url) URL.revokeObjectURL(slot.url); });
-  });
-
-  setDuration(10, false);
-  updateSelectedUI();
-  renderLoop();
 })();
 </script>
 </body>
