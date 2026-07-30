@@ -3,36 +3,74 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>銅鑼燒工作室｜電腦影片拼接 v1.2</title>
+<title>銅鑼燒工作室｜電腦影片拼接 v1.3</title>
 <style>
-:root{--bg:#171b20;--panel:#222830;--panel2:#2d3540;--line:#3d4855;--text:#eef2f5;--muted:#aab4bf;--accent:#506f91;--accent2:#6285aa;--danger:#8c5757;--ok:#4d7963}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif}
-button,input,select{font:inherit}.app{max-width:1320px;margin:auto;padding:20px}header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:14px}
-h1{font-size:24px;margin:0}.sub{font-size:13px;color:var(--muted);margin-top:4px}
-.toolbar,.bottom{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px}
-.group{display:flex;align-items:center;gap:7px}.label{font-size:13px;color:var(--muted);font-weight:700}.seg{display:flex;gap:5px}
-button{border:0;border-radius:9px;padding:8px 13px;color:var(--text);background:var(--panel2);cursor:pointer}button.active,.primary{background:var(--accent)}button:hover{background:var(--accent2)}
-input[type=number],select{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px;width:85px}
-.workspace{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:14px;margin-top:14px}
-.preview-wrap{background:#0d1014;border:1px solid var(--line);border-radius:14px;padding:14px;min-height:640px;display:flex;align-items:center;justify-content:center}
-.grid{width:min(100%,720px);display:grid;gap:6px;background:#000}
+:root{
+  --bg:#eef3f8;
+  --panel:#ffffff;
+  --panel2:#f4f7fb;
+  --panel3:#edf2f8;
+  --line:#d9e2ee;
+  --text:#2b3645;
+  --muted:#738195;
+  --accent:#6f89a8;
+  --accent2:#839ab6;
+  --accent3:#dfe8f3;
+  --danger:#c98787;
+  --ok:#7aa38d;
+  --shadow:0 10px 28px rgba(63,91,122,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#f6f9fc 0%,#eef3f8 100%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif}
+button,input,select{font:inherit}
+.app{max-width:1320px;margin:auto;padding:22px}
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:16px}
+h1{font-size:28px;margin:0;color:#334155;letter-spacing:.3px}
+.sub{font-size:13px;color:var(--muted);margin-top:4px}
+.toolbar,.bottom,.result,.side,.preview-wrap{background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow)}
+.toolbar,.bottom{display:flex;flex-wrap:wrap;gap:10px;align-items:center;border-radius:18px;padding:14px}
+.group{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.label{font-size:13px;color:var(--muted);font-weight:800}
+.seg{display:flex;gap:6px}
+button{border:1px solid var(--line);border-radius:11px;padding:9px 14px;color:var(--text);background:var(--panel2);cursor:pointer;transition:.18s ease}
+button.active,.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+button:hover{background:var(--accent3);border-color:#c9d6e6}
+button.active:hover,.primary:hover{background:var(--accent2);border-color:var(--accent2)}
+input[type=number],select{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:8px 10px;width:86px;outline:none}
+input[type=number]:focus,select:focus{border-color:#b7c7da;box-shadow:0 0 0 3px rgba(127,154,184,.12)}
+.workspace{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px;margin-top:16px}
+.preview-wrap{border-radius:20px;padding:18px;min-height:640px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#ffffff 0%,#f9fbfe 100%)}
+.grid{width:min(100%,720px);display:grid;gap:8px;background:#dde6f1;padding:8px;border-radius:16px}
 .layout-2{grid-template:repeat(2,1fr)/1fr;aspect-ratio:9/16}
 .layout-3{grid-template:repeat(3,1fr)/1fr;aspect-ratio:9/16}
 .layout-4{grid-template:repeat(2,1fr)/repeat(2,1fr);aspect-ratio:1}
-.slot{position:relative;overflow:hidden;background:#252b33;border:1px dashed #52606f;cursor:pointer}.slot video{width:100%;height:100%;object-fit:cover;background:#000;display:block}
-.empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#c7d0d9}.empty b{font-size:28px}.badge{position:absolute;left:8px;top:8px;background:#000a;padding:4px 7px;border-radius:7px;font-size:12px}
-.remove{position:absolute;right:7px;top:7px;background:#000a}.side{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;min-height:640px}
-.side h2{font-size:16px;margin:0 0 10px}.hint,.notice{font-size:12px;color:var(--muted);line-height:1.6}.card{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:11px;margin-top:9px}
-.card-title{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:8px}.row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:7px 0;font-size:13px}
-.row input[type=range]{width:145px}.bottom{margin-top:14px}.primary{font-weight:800;padding:10px 22px}.primary:disabled{opacity:.45}.progress{height:10px;background:#303944;border-radius:99px;overflow:hidden;flex:1}.bar{height:100%;width:0;background:var(--ok)}
-.status{min-width:220px;color:var(--muted);font-size:13px}.result{display:none;margin-top:12px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px}
-.result video{width:min(100%,500px);max-height:440px;background:#000;border-radius:10px}.download{display:inline-block;margin-top:9px;padding:9px 15px;background:var(--ok);color:#fff;text-decoration:none;border-radius:9px;font-weight:800}
-canvas,.hidden-media{display:none!important}@media(max-width:900px){.workspace{grid-template-columns:1fr}.side{min-height:auto}.preview-wrap{min-height:500px}}
+.slot{position:relative;overflow:hidden;background:#edf2f8;border:1.5px dashed #bfcbda;border-radius:14px;cursor:pointer}
+.slot video{width:100%;height:100%;object-fit:cover;background:#dfe7f1;display:block}
+.empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#76879a;gap:4px}
+.empty b{font-size:30px;color:#7e96b3}
+.badge{position:absolute;left:10px;top:10px;background:rgba(56,72,95,.74);padding:5px 8px;border-radius:999px;font-size:12px;color:#fff}
+.remove{position:absolute;right:10px;top:10px;background:rgba(56,72,95,.74);color:#fff;border:none;padding:5px 9px}
+.side{border-radius:20px;padding:16px;min-height:640px;background:linear-gradient(180deg,#ffffff 0%,#f8fbfe 100%)}
+.side h2{font-size:17px;margin:0 0 10px;color:#334155}.hint,.notice{font-size:12.5px;color:var(--muted);line-height:1.7}
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:12px 13px;margin-top:10px}
+.card-title{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:8px;color:#3c4b60}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:7px 0;font-size:13px;color:#405064}
+.row input[type=range]{width:145px;accent-color:#7c95b2}
+.bottom{margin-top:16px;border-radius:18px}
+.primary{font-weight:800;padding:10px 22px}.primary:disabled{opacity:.45}
+.progress{height:10px;background:#e5edf6;border-radius:999px;overflow:hidden;flex:1}.bar{height:100%;width:0;background:linear-gradient(90deg,#86b39d,#78a58d)}
+.status{min-width:220px;color:var(--muted);font-size:13px}
+.result{display:none;margin-top:14px;border-radius:18px;padding:14px}
+.result h2{margin:0 0 10px;color:#334155;font-size:17px}
+.result video{width:min(100%,500px);max-height:440px;background:#dfe7f1;border-radius:12px}
+.download{display:inline-block;margin-top:10px;padding:10px 15px;background:var(--ok);color:#fff;text-decoration:none;border-radius:10px;font-weight:800}
+canvas,.hidden-media{display:none!important}
+@media(max-width:900px){.workspace{grid-template-columns:1fr}.side{min-height:auto}.preview-wrap{min-height:500px}}
 </style>
 </head>
 <body>
 <div class="app">
-<header><div><h1>銅鑼燒工作室｜電腦影片拼接</h1><div class="sub">v1.2｜2 格、3 格、4 格</div></div><div class="sub">Windows／Mac・Chrome／Edge</div></header>
+<header><div><h1>銅鑼燒工作室｜電腦影片拼接</h1><div class="sub">v1.3｜柔和淺色版・2 格、3 格、4 格</div></div><div class="sub">Windows／Mac・Chrome／Edge</div></header>
 <div class="toolbar">
  <div class="group"><span class="label">版型</span><div class="seg" id="layouts"><button data-n="2" class="active">2 格</button><button data-n="3">3 格</button><button data-n="4">4 格</button></div></div>
  <div class="group"><span class="label">成品長度</span><div class="seg" id="presets"><button data-s="5">5 秒</button><button data-s="10" class="active">10 秒</button><button data-s="15">15 秒</button></div><input id="duration" type="number" min="1" max="30" value="10"><span class="label">秒</span></div>
@@ -41,7 +79,7 @@ canvas,.hidden-media{display:none!important}@media(max-width:900px){.workspace{g
 </div>
 <div class="workspace">
  <div class="preview-wrap"><div id="grid" class="grid layout-2"></div></div>
- <aside class="side"><h2>每格設定</h2><div class="hint">點左側框框加入影片。已輸出的 2 格成品，也可以再次放進 4 格版型。</div><div id="settings"></div></aside>
+ <aside class="side"><h2>每格設定</h2><div class="hint">點左側框框加入影片。介面已改成較柔和的淺色版；已輸出的 2 格成品，也可以再次放進 4 格版型。</div><div id="settings"></div></aside>
 </div>
 <div class="bottom"><button class="primary" id="export">輸出影片</button><div class="progress"><div class="bar" id="bar"></div></div><div class="status" id="status">就緒</div></div>
 <div class="notice">輸出採即時錄製：10 秒影片約需等待 10 秒。輸出時不要切換分頁。可重複輸出，不需重新整理。</div>
