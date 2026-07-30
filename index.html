@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>銅鑼燒工作室｜電腦影片拼接 v1.1</title>
+<title>銅鑼燒工作室｜電腦影片拼接 v1.2</title>
 <style>
 :root{--bg:#171b20;--panel:#222830;--panel2:#2d3540;--line:#3d4855;--text:#eef2f5;--muted:#aab4bf;--accent:#506f91;--accent2:#6285aa;--danger:#8c5757;--ok:#4d7963}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif}
@@ -15,7 +15,10 @@ button{border:0;border-radius:9px;padding:8px 13px;color:var(--text);background:
 input[type=number],select{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px;width:85px}
 .workspace{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:14px;margin-top:14px}
 .preview-wrap{background:#0d1014;border:1px solid var(--line);border-radius:14px;padding:14px;min-height:640px;display:flex;align-items:center;justify-content:center}
-.grid{width:min(100%,720px);display:grid;gap:6px;background:#000}.layout-2{grid-template:repeat(2,1fr)/1fr;aspect-ratio:9/16}.layout-3{grid-template:repeat(3,1fr)/1fr;aspect-ratio:9/16}.layout-4{grid-template:repeat(2,1fr)/repeat(2,1fr);aspect-ratio:1}
+.grid{width:min(100%,720px);display:grid;gap:6px;background:#000}
+.layout-2{grid-template:repeat(2,1fr)/1fr;aspect-ratio:9/16}
+.layout-3{grid-template:repeat(3,1fr)/1fr;aspect-ratio:9/16}
+.layout-4{grid-template:repeat(2,1fr)/repeat(2,1fr);aspect-ratio:1}
 .slot{position:relative;overflow:hidden;background:#252b33;border:1px dashed #52606f;cursor:pointer}.slot video{width:100%;height:100%;object-fit:cover;background:#000;display:block}
 .empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#c7d0d9}.empty b{font-size:28px}.badge{position:absolute;left:8px;top:8px;background:#000a;padding:4px 7px;border-radius:7px;font-size:12px}
 .remove{position:absolute;right:7px;top:7px;background:#000a}.side{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;min-height:640px}
@@ -24,12 +27,12 @@ input[type=number],select{background:var(--panel2);color:var(--text);border:1px 
 .row input[type=range]{width:145px}.bottom{margin-top:14px}.primary{font-weight:800;padding:10px 22px}.primary:disabled{opacity:.45}.progress{height:10px;background:#303944;border-radius:99px;overflow:hidden;flex:1}.bar{height:100%;width:0;background:var(--ok)}
 .status{min-width:220px;color:var(--muted);font-size:13px}.result{display:none;margin-top:12px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px}
 .result video{width:min(100%,500px);max-height:440px;background:#000;border-radius:10px}.download{display:inline-block;margin-top:9px;padding:9px 15px;background:var(--ok);color:#fff;text-decoration:none;border-radius:9px;font-weight:800}
-canvas{display:none}@media(max-width:900px){.workspace{grid-template-columns:1fr}.side{min-height:auto}.preview-wrap{min-height:500px}}
+canvas,.hidden-media{display:none!important}@media(max-width:900px){.workspace{grid-template-columns:1fr}.side{min-height:auto}.preview-wrap{min-height:500px}}
 </style>
 </head>
 <body>
 <div class="app">
-<header><div><h1>銅鑼燒工作室｜電腦影片拼接</h1><div class="sub">v1.1 桌面原生合成版｜2／3／4 格</div></div><div class="sub">Windows／Mac・Chrome／Edge</div></header>
+<header><div><h1>銅鑼燒工作室｜電腦影片拼接</h1><div class="sub">v1.2｜2 格、3 格、4 格</div></div><div class="sub">Windows／Mac・Chrome／Edge</div></header>
 <div class="toolbar">
  <div class="group"><span class="label">版型</span><div class="seg" id="layouts"><button data-n="2" class="active">2 格</button><button data-n="3">3 格</button><button data-n="4">4 格</button></div></div>
  <div class="group"><span class="label">成品長度</span><div class="seg" id="presets"><button data-s="5">5 秒</button><button data-s="10" class="active">10 秒</button><button data-s="15">15 秒</button></div><input id="duration" type="number" min="1" max="30" value="10"><span class="label">秒</span></div>
@@ -38,12 +41,13 @@ canvas{display:none}@media(max-width:900px){.workspace{grid-template-columns:1fr
 </div>
 <div class="workspace">
  <div class="preview-wrap"><div id="grid" class="grid layout-2"></div></div>
- <aside class="side"><h2>每格設定</h2><div class="hint">點左側框框加入影片。已輸出的拼接影片也能再次加入 4 格。</div><div id="settings"></div></aside>
+ <aside class="side"><h2>每格設定</h2><div class="hint">點左側框框加入影片。已輸出的 2 格成品，也可以再次放進 4 格版型。</div><div id="settings"></div></aside>
 </div>
 <div class="bottom"><button class="primary" id="export">輸出影片</button><div class="progress"><div class="bar" id="bar"></div></div><div class="status" id="status">就緒</div></div>
-<div class="notice">輸出採即時錄製：10 秒影片約需等待 10 秒。處理時請勿切換分頁。支援 MP4 的瀏覽器會輸出 MP4，否則輸出 WebM。</div>
+<div class="notice">輸出採即時錄製：10 秒影片約需等待 10 秒。輸出時不要切換分頁。可重複輸出，不需重新整理。</div>
 <div class="result" id="result"><h2>輸出結果</h2><video id="outVideo" controls></video><br><a id="download" class="download">下載影片</a></div>
 <input id="picker" type="file" accept="video/*" hidden><canvas id="canvas"></canvas>
+<div id="audioPool" class="hidden-media"></div>
 </div>
 <script>
 const $=s=>document.querySelector(s);
@@ -55,7 +59,7 @@ function render(){
  for(let i=0;i<layout;i++){
   const s=slots[i],d=document.createElement("div");d.className="slot";d.onclick=()=>pick(i);
   if(s.file){
-   d.innerHTML=`<video src="${s.url}" playsinline preload="auto"></video><span class="badge">第 ${i+1} 格</span><button class="remove">移除</button>`;
+   d.innerHTML=`<video src="${s.url}" muted playsinline preload="auto"></video><span class="badge">第 ${i+1} 格</span><button class="remove">移除</button>`;
    d.querySelector(".remove").onclick=e=>{e.stopPropagation();clearSlot(i)};
   }else d.innerHTML=`<div class="empty"><b>＋</b><span>點此選擇第 ${i+1} 格影片</span></div>`;
   g.appendChild(d);
@@ -84,29 +88,97 @@ $("#presets").onclick=e=>{if(!e.target.dataset.s)return;$("#duration").value=e.t
 $("#preview").onclick=async()=>{const vs=[...document.querySelectorAll(".slot video")];vs.forEach((v,i)=>{v.currentTime=slots[i].start;v.muted=slots[i].mute;v.volume=Math.min(1,slots[i].volume)});await Promise.allSettled(vs.map(v=>v.play()))}
 $("#pause").onclick=()=>document.querySelectorAll(".slot video").forEach(v=>v.pause());
 
-function waitEvent(el,name,timeout=10000){return new Promise((res,rej)=>{if(name==="loadedmetadata"&&el.readyState>=1)return res();const t=setTimeout(()=>rej(new Error("影片載入逾時")),timeout);el.addEventListener(name,()=>{clearTimeout(t);res()},{once:true})})}
+function waitEvent(el,name,timeout=12000){return new Promise((res,rej)=>{if(name==="loadedmetadata"&&el.readyState>=1)return res();const t=setTimeout(()=>rej(new Error("影片載入逾時")),timeout);el.addEventListener(name,()=>{clearTimeout(t);res()},{once:true})})}
 function drawCover(ctx,v,x,y,w,h){const vr=v.videoWidth/v.videoHeight,rr=w/h;let sx=0,sy=0,sw=v.videoWidth,sh=v.videoHeight;if(vr>rr){sw=v.videoHeight*rr;sx=(v.videoWidth-sw)/2}else{sh=v.videoWidth/rr;sy=(v.videoHeight-sh)/2}ctx.drawImage(v,sx,sy,sw,sh,x,y,w,h)}
+
+async function buildAudioPlayers(active){
+ const pool=$("#audioPool");pool.innerHTML="";
+ const audioVideos=[];
+ for(let i=0;i<active.length;i++){
+   const v=document.createElement("video");
+   v.src=active[i].url;v.preload="auto";v.playsInline=true;v.crossOrigin="anonymous";
+   pool.appendChild(v);audioVideos.push(v);
+ }
+ await Promise.all(audioVideos.map(v=>waitEvent(v,"loadedmetadata")));
+ return audioVideos;
+}
+
 $("#export").onclick=async()=>{
  const active=slots.slice(0,layout);if(active.some(s=>!s.file)){alert(`請先加入 ${layout} 支影片`);return}
- const sec=Math.max(1,Math.min(30,+$("#duration").value||10)),q=+$("#quality").value,btn=$("#export");btn.disabled=true;$("#result").style.display="none";
+ const sec=Math.max(1,Math.min(30,+$("#duration").value||10)),q=+$("#quality").value,btn=$("#export");btn.disabled=true;$("#result").style.display="none";$("#bar").style.width="0%";
+ let audioCtx=null;
  try{
-  const vids=[...document.querySelectorAll(".slot video")];await Promise.all(vids.map(v=>waitEvent(v,"loadedmetadata")));
-  let W,H,cols,rows;if(layout<4){W=q;H=Math.round(q*16/9);cols=1;rows=layout}else{W=q;H=q;cols=2;rows=2}W-=W%2;H-=H%2;
+  const displayVids=[...document.querySelectorAll(".slot video")];
+  await Promise.all(displayVids.map(v=>waitEvent(v,"loadedmetadata")));
+
+  let W,H,cols,rows;
+  if(layout<4){W=q;H=Math.round(q*16/9);cols=1;rows=layout}else{W=q;H=q;cols=2;rows=2}
+  W-=W%2;H-=H%2;
+
   const cv=$("#canvas"),ctx=cv.getContext("2d");cv.width=W;cv.height=H;
-  const stream=cv.captureStream(30),audioCtx=new AudioContext(),dest=audioCtx.createMediaStreamDestination();
-  vids.forEach((v,i)=>{v.currentTime=active[i].start;v.muted=true;const src=audioCtx.createMediaElementSource(v),gain=audioCtx.createGain();gain.gain.value=active[i].mute?0:active[i].volume;src.connect(gain).connect(dest)});
+  const stream=cv.captureStream(30);
+
+  const audioVids=await buildAudioPlayers(active);
+  audioCtx=new AudioContext();
+  const dest=audioCtx.createMediaStreamDestination();
+
+  audioVids.forEach((v,i)=>{
+    v.currentTime=active[i].start;
+    v.muted=false;
+    const src=audioCtx.createMediaElementSource(v);
+    const gain=audioCtx.createGain();
+    gain.gain.value=active[i].mute?0:active[i].volume;
+    src.connect(gain).connect(dest);
+  });
   dest.stream.getAudioTracks().forEach(t=>stream.addTrack(t));
+
+  displayVids.forEach((v,i)=>{v.currentTime=active[i].start;v.muted=true});
   const types=["video/mp4;codecs=avc1.42E01E,mp4a.40.2","video/mp4","video/webm;codecs=vp9,opus","video/webm;codecs=vp8,opus"];
-  const mime=types.find(MediaRecorder.isTypeSupported)||"";const rec=new MediaRecorder(stream,mime?{mimeType:mime,videoBitsPerSecond:q===720?5000000:3000000}:{});
+  const mime=types.find(MediaRecorder.isTypeSupported)||"";
+  const rec=new MediaRecorder(stream,mime?{mimeType:mime,videoBitsPerSecond:q===720?5000000:3000000}:{});
   const chunks=[];rec.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};
-  const stopped=new Promise(r=>rec.onstop=r);await audioCtx.resume();await Promise.all(vids.map(v=>v.play()));rec.start(250);
+  const stopped=new Promise(r=>rec.onstop=r);
+
+  await audioCtx.resume();
+  await Promise.all([...displayVids,...audioVids].map(v=>v.play()));
+  rec.start(250);
+
   const start=performance.now();$("#status").textContent="錄製中 0%";
-  await new Promise(resolve=>{function frame(now){const p=Math.min(1,(now-start)/(sec*1000));ctx.fillStyle="#000";ctx.fillRect(0,0,W,H);const cw=W/cols,ch=H/rows;vids.forEach((v,i)=>drawCover(ctx,v,(i%cols)*cw,Math.floor(i/cols)*ch,cw,ch));$("#bar").style.width=`${Math.round(p*100)}%`;$("#status").textContent=`錄製中 ${Math.round(p*100)}%`;if(p<1)requestAnimationFrame(frame);else resolve()}requestAnimationFrame(frame)});
-  rec.stop();vids.forEach(v=>v.pause());await stopped;audioCtx.close();
-  const blob=new Blob(chunks,{type:mime||"video/webm"});if(outURL)URL.revokeObjectURL(outURL);outURL=URL.createObjectURL(blob);
-  const ext=mime.includes("mp4")?"mp4":"webm";$("#outVideo").src=outURL;$("#download").href=outURL;$("#download").download=`影片拼接.${ext}`;$("#download").textContent=`下載 ${ext.toUpperCase()}`;
-  $("#result").style.display="block";$("#status").textContent=`完成（${ext.toUpperCase()}）`;$("#bar").style.width="100%";
- }catch(err){console.error(err);alert("輸出失敗："+err.message);$("#status").textContent="輸出失敗"}finally{btn.disabled=false}
+  await new Promise(resolve=>{
+    function frame(now){
+      const p=Math.min(1,(now-start)/(sec*1000));
+      ctx.fillStyle="#000";ctx.fillRect(0,0,W,H);
+      const cw=W/cols,ch=H/rows;
+      displayVids.forEach((v,i)=>drawCover(ctx,v,(i%cols)*cw,Math.floor(i/cols)*ch,cw,ch));
+      $("#bar").style.width=`${Math.round(p*100)}%`;
+      $("#status").textContent=`錄製中 ${Math.round(p*100)}%`;
+      if(p<1)requestAnimationFrame(frame);else resolve();
+    }
+    requestAnimationFrame(frame);
+  });
+
+  rec.stop();
+  [...displayVids,...audioVids].forEach(v=>v.pause());
+  await stopped;
+
+  const blob=new Blob(chunks,{type:mime||"video/webm"});
+  if(outURL)URL.revokeObjectURL(outURL);
+  outURL=URL.createObjectURL(blob);
+  const ext=mime.includes("mp4")?"mp4":"webm";
+  $("#outVideo").src=outURL;
+  $("#download").href=outURL;
+  $("#download").download=`影片拼接.${ext}`;
+  $("#download").textContent=`下載 ${ext.toUpperCase()}`;
+  $("#result").style.display="block";
+  $("#status").textContent=`完成（${ext.toUpperCase()}）`;
+  $("#bar").style.width="100%";
+ }catch(err){
+  console.error(err);alert("輸出失敗："+err.message);$("#status").textContent="輸出失敗";
+ }finally{
+  if(audioCtx){try{await audioCtx.close()}catch{}}
+  $("#audioPool").innerHTML="";
+  btn.disabled=false;
+ }
 };
 render();
 </script>
