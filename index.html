@@ -3,42 +3,111 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>銅鑼燒工作室｜電腦影片拼接</title>
+<title>銅鑼燒工作室｜電腦影片拼接 v1.1</title>
 <style>
 :root{--bg:#171b20;--panel:#222830;--panel2:#2d3540;--line:#3d4855;--text:#eef2f5;--muted:#aab4bf;--accent:#506f91;--accent2:#6285aa;--danger:#8c5757;--ok:#4d7963}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif}button,input,select{font:inherit}.app{max-width:1320px;margin:auto;padding:20px}header{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:14px}h1{font-size:24px;margin:0}.sub{color:var(--muted);font-size:13px;margin-top:4px}.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px}.group{display:flex;align-items:center;gap:7px}.label{font-size:13px;color:var(--muted);font-weight:700}.seg{display:flex;gap:5px}.seg button,.smallbtn,.primary{border:0;border-radius:9px;padding:8px 13px;color:var(--text);background:var(--panel2);cursor:pointer}.seg button.active{background:var(--accent)}.seg button:hover,.smallbtn:hover{background:var(--accent2)}input[type=number],select{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px;width:82px}.workspace{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:14px;margin-top:14px}.preview-wrap{background:#0d1014;border:1px solid var(--line);border-radius:14px;padding:14px;min-height:640px;display:flex;align-items:center;justify-content:center}.grid{width:min(100%,720px);display:grid;gap:6px;background:#0a0c0f}.grid.layout-2{grid-template:repeat(2,1fr)/1fr;aspect-ratio:9/16}.grid.layout-3{grid-template:repeat(3,1fr)/1fr;aspect-ratio:9/16}.grid.layout-4{grid-template:repeat(2,1fr)/repeat(2,1fr);aspect-ratio:1/1}.slot{position:relative;overflow:hidden;background:#252b33;border:1px dashed #52606f;cursor:pointer;min-height:80px}.slot video{width:100%;height:100%;object-fit:cover;display:block;background:#000}.slot .empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px;color:#c7d0d9}.slot .empty b{font-size:24px}.slot .badge{position:absolute;left:8px;top:8px;background:#000a;padding:4px 7px;border-radius:7px;font-size:12px}.slot .remove{position:absolute;right:7px;top:7px;border:0;background:#000a;color:white;border-radius:7px;padding:4px 8px;cursor:pointer}.side{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;min-height:640px}.side h2{font-size:16px;margin:0 0 12px}.hint{font-size:12px;color:var(--muted);line-height:1.6}.card{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:11px;margin-bottom:9px}.card-title{font-weight:800;margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:7px 0;font-size:13px}.row input[type=range]{width:145px}.row input[type=number]{width:92px}.switch{display:flex;align-items:center;gap:6px}.bottom{display:flex;align-items:center;gap:12px;margin-top:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px}.primary{background:var(--accent);font-weight:800;padding:10px 22px}.primary:hover{background:var(--accent2)}.primary:disabled{opacity:.45;cursor:not-allowed}.progress{height:10px;background:#303944;border-radius:99px;overflow:hidden;flex:1}.bar{height:100%;width:0;background:var(--ok);transition:width .15s}.status{min-width:220px;color:var(--muted);font-size:13px}.log{margin-top:10px;background:#0d1014;border:1px solid var(--line);border-radius:10px;padding:10px;color:#9dadbd;font-family:ui-monospace,monospace;font-size:11px;max-height:120px;overflow:auto;display:none}.result{display:none;margin-top:12px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px}.result video{width:min(100%,500px);max-height:440px;background:#000;border-radius:10px}a.download{display:inline-block;margin-top:9px;padding:9px 15px;background:var(--ok);color:white;text-decoration:none;border-radius:9px;font-weight:800}.notice{margin-top:10px;color:var(--muted);font-size:12px}@media(max-width:900px){.workspace{grid-template-columns:1fr}.side{min-height:auto}.preview-wrap{min-height:500px}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif}
+button,input,select{font:inherit}.app{max-width:1320px;margin:auto;padding:20px}header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:14px}
+h1{font-size:24px;margin:0}.sub{font-size:13px;color:var(--muted);margin-top:4px}
+.toolbar,.bottom{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px}
+.group{display:flex;align-items:center;gap:7px}.label{font-size:13px;color:var(--muted);font-weight:700}.seg{display:flex;gap:5px}
+button{border:0;border-radius:9px;padding:8px 13px;color:var(--text);background:var(--panel2);cursor:pointer}button.active,.primary{background:var(--accent)}button:hover{background:var(--accent2)}
+input[type=number],select{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px;width:85px}
+.workspace{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:14px;margin-top:14px}
+.preview-wrap{background:#0d1014;border:1px solid var(--line);border-radius:14px;padding:14px;min-height:640px;display:flex;align-items:center;justify-content:center}
+.grid{width:min(100%,720px);display:grid;gap:6px;background:#000}.layout-2{grid-template:repeat(2,1fr)/1fr;aspect-ratio:9/16}.layout-3{grid-template:repeat(3,1fr)/1fr;aspect-ratio:9/16}.layout-4{grid-template:repeat(2,1fr)/repeat(2,1fr);aspect-ratio:1}
+.slot{position:relative;overflow:hidden;background:#252b33;border:1px dashed #52606f;cursor:pointer}.slot video{width:100%;height:100%;object-fit:cover;background:#000;display:block}
+.empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#c7d0d9}.empty b{font-size:28px}.badge{position:absolute;left:8px;top:8px;background:#000a;padding:4px 7px;border-radius:7px;font-size:12px}
+.remove{position:absolute;right:7px;top:7px;background:#000a}.side{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;min-height:640px}
+.side h2{font-size:16px;margin:0 0 10px}.hint,.notice{font-size:12px;color:var(--muted);line-height:1.6}.card{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:11px;margin-top:9px}
+.card-title{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:8px}.row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:7px 0;font-size:13px}
+.row input[type=range]{width:145px}.bottom{margin-top:14px}.primary{font-weight:800;padding:10px 22px}.primary:disabled{opacity:.45}.progress{height:10px;background:#303944;border-radius:99px;overflow:hidden;flex:1}.bar{height:100%;width:0;background:var(--ok)}
+.status{min-width:220px;color:var(--muted);font-size:13px}.result{display:none;margin-top:12px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px}
+.result video{width:min(100%,500px);max-height:440px;background:#000;border-radius:10px}.download{display:inline-block;margin-top:9px;padding:9px 15px;background:var(--ok);color:#fff;text-decoration:none;border-radius:9px;font-weight:800}
+canvas{display:none}@media(max-width:900px){.workspace{grid-template-columns:1fr}.side{min-height:auto}.preview-wrap{min-height:500px}}
 </style>
 </head>
 <body>
 <div class="app">
-<header><div><h1>銅鑼燒工作室｜電腦影片拼接</h1><div class="sub">2／3／4 格・截取片段・多軌混音・輸出 MP4</div></div><div class="sub">Windows／Mac 共用・建議 Chrome 或 Edge</div></header>
+<header><div><h1>銅鑼燒工作室｜電腦影片拼接</h1><div class="sub">v1.1 桌面原生合成版｜2／3／4 格</div></div><div class="sub">Windows／Mac・Chrome／Edge</div></header>
 <div class="toolbar">
- <div class="group"><span class="label">版型</span><div class="seg" id="layoutButtons"><button data-n="2" class="active">2 格</button><button data-n="3">3 格</button><button data-n="4">4 格</button></div></div>
- <div class="group"><span class="label">成品長度</span><div class="seg" id="durationButtons"><button data-sec="5">5 秒</button><button data-sec="10" class="active">10 秒</button><button data-sec="15">15 秒</button></div><input id="duration" type="number" value="10" min="1" max="30"><span class="label">秒</span></div>
+ <div class="group"><span class="label">版型</span><div class="seg" id="layouts"><button data-n="2" class="active">2 格</button><button data-n="3">3 格</button><button data-n="4">4 格</button></div></div>
+ <div class="group"><span class="label">成品長度</span><div class="seg" id="presets"><button data-s="5">5 秒</button><button data-s="10" class="active">10 秒</button><button data-s="15">15 秒</button></div><input id="duration" type="number" min="1" max="30" value="10"><span class="label">秒</span></div>
  <div class="group"><span class="label">畫質</span><select id="quality"><option value="540">540p 快速</option><option value="720" selected>720p 清晰</option></select></div>
- <button class="smallbtn" id="previewAll">同步預覽</button><button class="smallbtn" id="pauseAll">全部暫停</button>
+ <button id="preview">同步預覽</button><button id="pause">全部暫停</button>
 </div>
-<div class="workspace"><div class="preview-wrap"><div id="grid" class="grid layout-2"></div></div><aside class="side"><h2>每格設定</h2><div class="hint">直接點左側空格選影片。已拼接完成的 MP4 也可再次加入，拿 4 支雙格成品再排成 4 格。</div><div id="settings"></div></aside></div>
-<div class="bottom"><button class="primary" id="exportBtn">輸出 MP4</button><div class="progress"><div class="bar" id="bar"></div></div><div class="status" id="status">尚未載入處理引擎</div></div>
-<div class="notice">第一次輸出會下載 FFmpeg 處理引擎。建議先用 2 格、5～10 秒短影片測試。</div>
-<div class="log" id="log"></div>
-<div class="result" id="result"><h2 style="font-size:16px;margin-top:0">輸出結果</h2><video id="resultVideo" controls playsinline></video><br><a id="download" class="download" download="影片拼接.mp4">下載 MP4</a></div>
-<input id="picker" type="file" accept="video/*" hidden>
+<div class="workspace">
+ <div class="preview-wrap"><div id="grid" class="grid layout-2"></div></div>
+ <aside class="side"><h2>每格設定</h2><div class="hint">點左側框框加入影片。已輸出的拼接影片也能再次加入 4 格。</div><div id="settings"></div></aside>
 </div>
-<script type="module">
-import { FFmpeg } from "https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.15/dist/esm/index.js";
-import { fetchFile, toBlobURL } from "https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.2/dist/esm/index.js";
-const $=s=>document.querySelector(s);const ffmpeg=new FFmpeg();let loaded=false,layout=2,pickingIndex=0,outputURL="";const slots=Array.from({length:4},(_,i)=>({file:null,url:"",start:0,volume:1,mute:false,index:i}));
-ffmpeg.on("log",({message})=>{const log=$("#log");log.textContent=message+"\n"+log.textContent.slice(0,5000)});ffmpeg.on("progress",({progress})=>{const p=Math.max(0,Math.min(1,progress||0));$("#bar").style.width=`${Math.round(p*100)}%`;$("#status").textContent=`處理中 ${Math.round(p*100)}%`});
-function render(){const grid=$("#grid");grid.className=`grid layout-${layout}`;grid.innerHTML="";for(let i=0;i<layout;i++){const s=slots[i],el=document.createElement("div");el.className="slot";el.onclick=()=>pick(i);if(s.file){el.innerHTML=`<video src="${s.url}" muted playsinline preload="metadata"></video><span class="badge">第 ${i+1} 格</span><button class="remove">移除</button>`;el.querySelector(".remove").onclick=e=>{e.stopPropagation();clearSlot(i)}}else{el.innerHTML=`<div class="empty"><b>＋</b><span>點此選擇第 ${i+1} 格影片</span></div>`}grid.appendChild(el)}renderSettings()}
-function renderSettings(){const wrap=$("#settings");wrap.innerHTML="";for(let i=0;i<layout;i++){const s=slots[i],c=document.createElement("div");c.className="card";c.innerHTML=`<div class="card-title">第 ${i+1} 格｜${s.file?s.file.name:"尚未加入"}</div><div class="row"><span>截取起點</span><span><input class="start" type="number" min="0" step="0.1" value="${s.start}"> 秒</span></div><div class="row"><span>音量</span><input class="volume" type="range" min="0" max="2" step="0.1" value="${s.volume}"></div><div class="row"><span>目前音量</span><span class="voltxt">${s.volume.toFixed(1)}</span></div><div class="row"><span>聲音</span><label class="switch"><input class="mute" type="checkbox" ${s.mute?"checked":""}> 靜音</label></div>`;c.querySelector(".start").oninput=e=>s.start=Math.max(0,Number(e.target.value)||0);c.querySelector(".volume").oninput=e=>{s.volume=Number(e.target.value);c.querySelector(".voltxt").textContent=s.volume.toFixed(1)};c.querySelector(".mute").onchange=e=>s.mute=e.target.checked;wrap.appendChild(c)}}
-function pick(i){pickingIndex=i;$("#picker").value="";$("#picker").click()}$("#picker").onchange=e=>{const file=e.target.files[0];if(!file)return;const s=slots[pickingIndex];if(s.url)URL.revokeObjectURL(s.url);s.file=file;s.url=URL.createObjectURL(file);s.start=0;render()};function clearSlot(i){const s=slots[i];if(s.url)URL.revokeObjectURL(s.url);Object.assign(s,{file:null,url:"",start:0,volume:1,mute:false});render()}
-$("#layoutButtons").onclick=e=>{if(!e.target.dataset.n)return;layout=Number(e.target.dataset.n);[...e.currentTarget.children].forEach(b=>b.classList.toggle("active",b===e.target));render()};$("#durationButtons").onclick=e=>{if(!e.target.dataset.sec)return;$("#duration").value=e.target.dataset.sec;[...e.currentTarget.children].forEach(b=>b.classList.toggle("active",b===e.target))};$("#duration").oninput=()=>{const v=Math.max(1,Math.min(30,Number($("#duration").value)||10));$("#duration").value=v;[...$("#durationButtons").children].forEach(b=>b.classList.toggle("active",b.dataset.sec===String(v)))};
-$("#previewAll").onclick=async()=>{const vids=[...document.querySelectorAll(".slot video")];vids.forEach((v,i)=>{v.currentTime=slots[i].start;v.muted=slots[i].mute;v.volume=Math.min(1,slots[i].volume)});await Promise.allSettled(vids.map(v=>v.play()))};$("#pauseAll").onclick=()=>document.querySelectorAll(".slot video").forEach(v=>v.pause());
-async function loadEngine(){if(loaded)return;$("#status").textContent="首次載入 FFmpeg 引擎…";const baseURL="https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/umd";await ffmpeg.load({classWorkerURL:new URL("./ffmpeg-worker-proxy.js",window.location.href).href,coreURL:await toBlobURL(`${baseURL}/ffmpeg-core.js`,"text/javascript"),wasmURL:await toBlobURL(`${baseURL}/ffmpeg-core.wasm`,"application/wasm")});loaded=true;$("#status").textContent="處理引擎已就緒"}
-function ext(name){const m=name.toLowerCase().match(/\.[a-z0-9]+$/);return m?m[0]:".mp4"}async function safeDelete(name){try{await ffmpeg.deleteFile(name)}catch{}}
-$("#exportBtn").onclick=async()=>{const active=slots.slice(0,layout);if(active.some(s=>!s.file)){alert(`請先加入 ${layout} 支影片。`);return}const duration=Math.max(1,Math.min(30,Number($("#duration").value)||10)),q=Number($("#quality").value),btn=$("#exportBtn");btn.disabled=true;$("#result").style.display="none";$("#log").style.display="block";$("#bar").style.width="0%";try{await loadEngine();const names=[];for(let i=0;i<layout;i++){const name=`input_${i}${ext(active[i].file.name)}`;names.push(name);$("#status").textContent=`讀取第 ${i+1} 支影片…`;await ffmpeg.writeFile(name,await fetchFile(active[i].file))}let cols,rows,W,H;if(layout===2||layout===3){cols=1;rows=layout;W=q;H=Math.round(q*16/9);H-=H%2}else{cols=2;rows=2;W=q;H=q}const cw=Math.floor(W/cols),ch=Math.floor(H/rows),args=["-y"];active.forEach((s,i)=>args.push("-ss",String(s.start),"-t",String(duration),"-i",names[i]));const f=[],vs=[],as=[];active.forEach((s,i)=>{f.push(`[${i}:v]scale=${cw}:${ch}:force_original_aspect_ratio=increase,crop=${cw}:${ch},setsar=1,trim=duration=${duration},setpts=PTS-STARTPTS[v${i}]`);vs.push(`v${i}`);if(s.mute){f.push(`anullsrc=channel_layout=stereo:sample_rate=44100,atrim=duration=${duration},asetpts=PTS-STARTPTS[a${i}]`)}else{f.push(`[${i}:a]atrim=duration=${duration},asetpts=PTS-STARTPTS,volume=${s.volume}[a${i}]`)}as.push(`a${i}`)});if(layout===2||layout===3){f.push(vs.map(x=>`[${x}]`).join("")+`vstack=inputs=${layout}[vout]`)}else{f.push(vs.map(x=>`[${x}]`).join("")+`xstack=inputs=4:layout=0_0|${cw}_0|0_${ch}|${cw}_${ch}[vout]`)}f.push(as.map(x=>`[${x}]`).join("")+`amix=inputs=${layout}:duration=shortest:normalize=0[aout]`);args.push("-filter_complex",f.join(";"),"-map","[vout]","-map","[aout]","-t",String(duration),"-c:v","libx264","-preset","ultrafast","-crf","23","-pix_fmt","yuv420p","-c:a","aac","-b:a","160k","-movflags","+faststart","output.mp4");$("#status").textContent="正在合成影片…";const rc=await ffmpeg.exec(args);if(rc!==0)throw new Error("FFmpeg 輸出失敗，請查看下方紀錄。");const data=await ffmpeg.readFile("output.mp4");if(outputURL)URL.revokeObjectURL(outputURL);outputURL=URL.createObjectURL(new Blob([data.buffer],{type:"video/mp4"}));$("#resultVideo").src=outputURL;$("#download").href=outputURL;$("#result").style.display="block";$("#bar").style.width="100%";$("#status").textContent="輸出完成";for(const name of names)await safeDelete(name);await safeDelete("output.mp4")}catch(err){console.error(err);$("#status").textContent="輸出失敗";alert("輸出失敗："+(err?.message||err)+"\n\n請使用 Chrome／Edge，並先以 2 格、5～10 秒短影片測試。")}finally{btn.disabled=false}};
+<div class="bottom"><button class="primary" id="export">輸出影片</button><div class="progress"><div class="bar" id="bar"></div></div><div class="status" id="status">就緒</div></div>
+<div class="notice">輸出採即時錄製：10 秒影片約需等待 10 秒。處理時請勿切換分頁。支援 MP4 的瀏覽器會輸出 MP4，否則輸出 WebM。</div>
+<div class="result" id="result"><h2>輸出結果</h2><video id="outVideo" controls></video><br><a id="download" class="download">下載影片</a></div>
+<input id="picker" type="file" accept="video/*" hidden><canvas id="canvas"></canvas>
+</div>
+<script>
+const $=s=>document.querySelector(s);
+let layout=2,pickIndex=0,outURL="";
+const slots=Array.from({length:4},()=>({file:null,url:"",start:0,volume:1,mute:false}));
+
+function render(){
+ const g=$("#grid");g.className=`grid layout-${layout}`;g.innerHTML="";
+ for(let i=0;i<layout;i++){
+  const s=slots[i],d=document.createElement("div");d.className="slot";d.onclick=()=>pick(i);
+  if(s.file){
+   d.innerHTML=`<video src="${s.url}" playsinline preload="auto"></video><span class="badge">第 ${i+1} 格</span><button class="remove">移除</button>`;
+   d.querySelector(".remove").onclick=e=>{e.stopPropagation();clearSlot(i)};
+  }else d.innerHTML=`<div class="empty"><b>＋</b><span>點此選擇第 ${i+1} 格影片</span></div>`;
+  g.appendChild(d);
+ }
+ settings();
+}
+function settings(){
+ const w=$("#settings");w.innerHTML="";
+ for(let i=0;i<layout;i++){
+  const s=slots[i],c=document.createElement("div");c.className="card";
+  c.innerHTML=`<div class="card-title">第 ${i+1} 格｜${s.file?s.file.name:"尚未加入"}</div>
+  <div class="row"><span>截取起點</span><span><input class="start" type="number" min="0" step=".1" value="${s.start}"> 秒</span></div>
+  <div class="row"><span>音量</span><input class="vol" type="range" min="0" max="2" step=".1" value="${s.volume}"></div>
+  <div class="row"><span>目前音量</span><span class="vt">${s.volume.toFixed(1)}</span></div>
+  <div class="row"><span>聲音</span><label><input class="mute" type="checkbox" ${s.mute?"checked":""}> 靜音</label></div>`;
+  c.querySelector(".start").oninput=e=>s.start=Math.max(0,+e.target.value||0);
+  c.querySelector(".vol").oninput=e=>{s.volume=+e.target.value;c.querySelector(".vt").textContent=s.volume.toFixed(1)};
+  c.querySelector(".mute").onchange=e=>s.mute=e.target.checked;w.appendChild(c);
+ }
+}
+function pick(i){pickIndex=i;$("#picker").value="";$("#picker").click()}
+$("#picker").onchange=e=>{const f=e.target.files[0];if(!f)return;const s=slots[pickIndex];if(s.url)URL.revokeObjectURL(s.url);s.file=f;s.url=URL.createObjectURL(f);s.start=0;render()}
+function clearSlot(i){const s=slots[i];if(s.url)URL.revokeObjectURL(s.url);Object.assign(s,{file:null,url:"",start:0,volume:1,mute:false});render()}
+$("#layouts").onclick=e=>{if(!e.target.dataset.n)return;layout=+e.target.dataset.n;[...e.currentTarget.children].forEach(b=>b.classList.toggle("active",b===e.target));render()}
+$("#presets").onclick=e=>{if(!e.target.dataset.s)return;$("#duration").value=e.target.dataset.s;[...e.currentTarget.children].forEach(b=>b.classList.toggle("active",b===e.target))}
+$("#preview").onclick=async()=>{const vs=[...document.querySelectorAll(".slot video")];vs.forEach((v,i)=>{v.currentTime=slots[i].start;v.muted=slots[i].mute;v.volume=Math.min(1,slots[i].volume)});await Promise.allSettled(vs.map(v=>v.play()))}
+$("#pause").onclick=()=>document.querySelectorAll(".slot video").forEach(v=>v.pause());
+
+function waitEvent(el,name,timeout=10000){return new Promise((res,rej)=>{if(name==="loadedmetadata"&&el.readyState>=1)return res();const t=setTimeout(()=>rej(new Error("影片載入逾時")),timeout);el.addEventListener(name,()=>{clearTimeout(t);res()},{once:true})})}
+function drawCover(ctx,v,x,y,w,h){const vr=v.videoWidth/v.videoHeight,rr=w/h;let sx=0,sy=0,sw=v.videoWidth,sh=v.videoHeight;if(vr>rr){sw=v.videoHeight*rr;sx=(v.videoWidth-sw)/2}else{sh=v.videoWidth/rr;sy=(v.videoHeight-sh)/2}ctx.drawImage(v,sx,sy,sw,sh,x,y,w,h)}
+$("#export").onclick=async()=>{
+ const active=slots.slice(0,layout);if(active.some(s=>!s.file)){alert(`請先加入 ${layout} 支影片`);return}
+ const sec=Math.max(1,Math.min(30,+$("#duration").value||10)),q=+$("#quality").value,btn=$("#export");btn.disabled=true;$("#result").style.display="none";
+ try{
+  const vids=[...document.querySelectorAll(".slot video")];await Promise.all(vids.map(v=>waitEvent(v,"loadedmetadata")));
+  let W,H,cols,rows;if(layout<4){W=q;H=Math.round(q*16/9);cols=1;rows=layout}else{W=q;H=q;cols=2;rows=2}W-=W%2;H-=H%2;
+  const cv=$("#canvas"),ctx=cv.getContext("2d");cv.width=W;cv.height=H;
+  const stream=cv.captureStream(30),audioCtx=new AudioContext(),dest=audioCtx.createMediaStreamDestination();
+  vids.forEach((v,i)=>{v.currentTime=active[i].start;v.muted=true;const src=audioCtx.createMediaElementSource(v),gain=audioCtx.createGain();gain.gain.value=active[i].mute?0:active[i].volume;src.connect(gain).connect(dest)});
+  dest.stream.getAudioTracks().forEach(t=>stream.addTrack(t));
+  const types=["video/mp4;codecs=avc1.42E01E,mp4a.40.2","video/mp4","video/webm;codecs=vp9,opus","video/webm;codecs=vp8,opus"];
+  const mime=types.find(MediaRecorder.isTypeSupported)||"";const rec=new MediaRecorder(stream,mime?{mimeType:mime,videoBitsPerSecond:q===720?5000000:3000000}:{});
+  const chunks=[];rec.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};
+  const stopped=new Promise(r=>rec.onstop=r);await audioCtx.resume();await Promise.all(vids.map(v=>v.play()));rec.start(250);
+  const start=performance.now();$("#status").textContent="錄製中 0%";
+  await new Promise(resolve=>{function frame(now){const p=Math.min(1,(now-start)/(sec*1000));ctx.fillStyle="#000";ctx.fillRect(0,0,W,H);const cw=W/cols,ch=H/rows;vids.forEach((v,i)=>drawCover(ctx,v,(i%cols)*cw,Math.floor(i/cols)*ch,cw,ch));$("#bar").style.width=`${Math.round(p*100)}%`;$("#status").textContent=`錄製中 ${Math.round(p*100)}%`;if(p<1)requestAnimationFrame(frame);else resolve()}requestAnimationFrame(frame)});
+  rec.stop();vids.forEach(v=>v.pause());await stopped;audioCtx.close();
+  const blob=new Blob(chunks,{type:mime||"video/webm"});if(outURL)URL.revokeObjectURL(outURL);outURL=URL.createObjectURL(blob);
+  const ext=mime.includes("mp4")?"mp4":"webm";$("#outVideo").src=outURL;$("#download").href=outURL;$("#download").download=`影片拼接.${ext}`;$("#download").textContent=`下載 ${ext.toUpperCase()}`;
+  $("#result").style.display="block";$("#status").textContent=`完成（${ext.toUpperCase()}）`;$("#bar").style.width="100%";
+ }catch(err){console.error(err);alert("輸出失敗："+err.message);$("#status").textContent="輸出失敗"}finally{btn.disabled=false}
+};
 render();
 </script>
-</body>
-</html>
+</body></html>
