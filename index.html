@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>銅鑼燒工作室｜影片拼接 v1.7</title>
+<title>銅鑼燒工作室｜影片拼接 v1.8</title>
 <style>
 :root{
   --bg:#eef3f8;
@@ -65,24 +65,24 @@ input[type=number]:focus,select:focus{border-color:#b7c7da;box-shadow:0 0 0 3px 
 .result h2{margin:0 0 10px;color:#334155;font-size:17px}
 .result video{width:min(100%,500px);max-height:440px;background:#dfe7f1;border-radius:12px}
 .download{display:inline-block;margin-top:10px;padding:10px 15px;background:var(--ok);color:#fff;text-decoration:none;border-radius:10px;font-weight:800}.mobile-note{display:none;margin-top:10px;padding:10px 12px;border-radius:12px;background:#fff4dc;border:1px solid #ecd59d;color:#705d35;font-size:12px;line-height:1.6}
-canvas,.hidden-media{display:none!important}
+#canvas,.hidden-media{display:none!important}.preview-result{display:none;margin-top:14px;border-radius:18px;padding:14px;background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow)}.preview-result.show{display:block}.preview-result h2{margin:0 0 10px;color:#334155;font-size:17px}.preview-stage{display:flex;justify-content:center;align-items:center;background:#e8eef5;border-radius:14px;padding:12px;min-height:240px}.preview-stage canvas{display:block;max-width:100%;max-height:520px;background:#000;border-radius:12px}.preview-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
 @media(max-width:900px){.workspace{grid-template-columns:1fr}.side{min-height:auto}.preview-wrap{min-height:420px}.grid{width:min(100%,460px)}}
 </style>
 </head>
 <body>
 <div class="app">
-<header><div><h1>銅鑼燒工作室｜電腦影片拼接</h1><div class="sub">v1.7｜手機輸出降載版・2 格、3 格、4 格</div></div><div class="sub">Windows／Mac・Chrome／Edge</div></header>
+<header><div><h1>銅鑼燒工作室｜電腦影片拼接</h1><div class="sub">v1.8｜新增成品試播・2 格、3 格、4 格</div></div><div class="sub">Windows／Mac・Chrome／Edge</div></header>
 <div class="toolbar">
  <div class="group"><span class="label">版型</span><div class="seg" id="layouts"><button data-n="2" class="active">2 格</button><button data-n="3">3 格</button><button data-n="4">4 格</button></div></div>
  <div class="group"><span class="label">成品長度</span><div class="seg" id="presets"><button data-s="5">5 秒</button><button data-s="10" class="active">10 秒</button><button data-s="15">15 秒</button></div><input id="duration" type="number" min="1" max="30" value="10"><span class="label">秒</span></div>
  <div class="group"><span class="label">畫質</span><select id="quality"><option value="540">540p 快速</option><option value="720" selected>720p 清晰</option></select></div>
- <button id="preview">同步預覽</button><button id="pause">全部暫停</button>
+ <button id="preview">試播成品</button><button id="pause">停止試播</button>
 </div>
 <div class="workspace">
  <div class="preview-wrap"><div id="grid" class="grid layout-2"></div></div>
  <aside class="side"><h2>每格設定</h2><div class="hint">點空白框加入影片；加入後可直接拖曳畫面。手機手勢已修正，滑桿拖動時也會立即更新預覽。</div><div id="settings"></div></aside>
 </div>
-<div class="bottom"><button class="primary" id="export">輸出影片</button><div class="progress"><div class="bar" id="bar"></div></div><div class="status" id="status">就緒</div></div>
+<div id="previewResult" class="preview-result"><h2>成品試播</h2><div class="preview-stage"><canvas id="previewCanvas"></canvas></div><div class="preview-actions"><button id="replayPreview">重新試播</button><button id="closePreview">關閉試播</button></div></div><div class="bottom"><button class="primary" id="export">輸出影片</button><div class="progress"><div class="bar" id="bar"></div></div><div class="status" id="status">就緒</div></div>
 <div class="notice">操作提示：手機用單指拖曳、雙指縮放；電腦可拖曳、滾輪縮放。手機輸出會自動降為 540p／24fps，請勿切換 App、分頁或鎖定畫面。</div>
 <div class="result" id="result"><h2>輸出結果</h2><video id="outVideo" controls></video><br><a id="download" class="download">下載影片</a></div>
 <input id="picker" type="file" accept="video/*" hidden><canvas id="canvas"></canvas>
@@ -214,8 +214,47 @@ $("#picker").onchange=e=>{const f=e.target.files[0];if(!f)return;const s=slots[p
 function clearSlot(i){const s=slots[i];if(s.url)URL.revokeObjectURL(s.url);Object.assign(s,{file:null,url:"",start:0,volume:1,mute:false,zoom:1,x:0,y:0});render()}
 $("#layouts").onclick=e=>{if(!e.target.dataset.n)return;layout=+e.target.dataset.n;selectedIndex=Math.min(selectedIndex,layout-1);[...e.currentTarget.children].forEach(b=>b.classList.toggle("active",b===e.target));render()}
 $("#presets").onclick=e=>{if(!e.target.dataset.s)return;$("#duration").value=e.target.dataset.s;[...e.currentTarget.children].forEach(b=>b.classList.toggle("active",b===e.target))}
-$("#preview").onclick=async()=>{const vs=[...document.querySelectorAll(".slot video")];vs.forEach((v,i)=>{v.currentTime=slots[i].start;v.muted=slots[i].mute;v.volume=Math.min(1,slots[i].volume)});await Promise.allSettled(vs.map(v=>v.play()))}
-$("#pause").onclick=()=>document.querySelectorAll(".slot video").forEach(v=>v.pause());
+let previewRAF=0,previewing=false;
+function stopPreview(){
+ previewing=false;
+ cancelAnimationFrame(previewRAF);
+ document.querySelectorAll(".slot video").forEach(v=>{try{v.pause()}catch{}});
+ $("#status").textContent="就緒";
+}
+async function playCombinedPreview(){
+ const active=slots.slice(0,layout);
+ if(active.some(s=>!s.file)){alert(`請先加入 ${layout} 支影片`);return}
+ stopPreview();
+ const vids=[...document.querySelectorAll(".slot video")];
+ try{
+  await Promise.all(vids.map(v=>waitEvent(v,"loadedmetadata",15000)));
+  await Promise.all(vids.map((v,i)=>waitSeek(v,active[i].start)));
+  const pc=$("#previewCanvas"),ctx=pc.getContext("2d",{alpha:false});
+  let W,H,cols,rows;
+  if(layout<4){W=360;H=640;cols=1;rows=layout}else{W=480;H=480;cols=2;rows=2}
+  pc.width=W;pc.height=H;
+  $("#previewResult").classList.add("show");
+  vids.forEach((v,i)=>{v.muted=active[i].mute;v.volume=Math.min(1,active[i].volume)});
+  for(const v of vids){await v.play()}
+  previewing=true;
+  const duration=Math.max(1,Math.min(isMobileDevice()?15:30,+$("#duration").value||10));
+  const started=performance.now();
+  $("#status").textContent="試播中";
+  const frame=now=>{
+   if(!previewing)return;
+   const p=(now-started)/(duration*1000);
+   ctx.fillStyle="#000";ctx.fillRect(0,0,W,H);
+   const cw=W/cols,ch=H/rows;
+   vids.forEach((v,i)=>{if(v.readyState>=2)drawAdjusted(ctx,v,(i%cols)*cw,Math.floor(i/cols)*ch,cw,ch,active[i])});
+   if(p<1)previewRAF=requestAnimationFrame(frame);else stopPreview();
+  };
+  previewRAF=requestAnimationFrame(frame);
+ }catch(err){stopPreview();alert("試播失敗："+(err.message||err))}
+}
+$("#preview").onclick=playCombinedPreview;
+$("#replayPreview").onclick=playCombinedPreview;
+$("#pause").onclick=stopPreview;
+$("#closePreview").onclick=()=>{stopPreview();$("#previewResult").classList.remove("show")};
 
 function waitEvent(el,name,timeout=12000){return new Promise((res,rej)=>{if(name==="loadedmetadata"&&el.readyState>=1)return res();const t=setTimeout(()=>rej(new Error("影片載入逾時")),timeout);el.addEventListener(name,()=>{clearTimeout(t);res()},{once:true})})}
 function drawAdjusted(ctx,v,x,y,w,h,s){
